@@ -6,3 +6,5 @@
 .env*.local
 .DS_Store
 next-env.d.ts
+
+tsconfig.tsbuildinfo

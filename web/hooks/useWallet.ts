@@ -1,20 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  connect as connectWallet,
-  disconnect as disconnectWallet,
-  isConnected as walletIsConnected,
-  getLocalStorage,
-} from "@stacks/connect";
 
-// @stacks/connect v8: the modern request()-based flow that Xverse and current
-// Leather actually implement. connect() opens the wallet, addresses are stored
-// in localStorage (key "@stacks/connect"), and getLocalStorage() reads them.
+// @stacks/connect v8 pulls in a large WalletConnect/Reown dependency chain.
+// We import it LAZILY (dynamic import) so it never runs during SSR/hydration —
+// only when the user actually reads or acts on their wallet. This avoids
+// blank-page hydration crashes on production (Vercel).
 
-function currentAddress(): string | null {
+async function stacksConnect() {
+  return import("@stacks/connect");
+}
+
+async function readAddress(): Promise<string | null> {
+  if (typeof window === "undefined") return null;
   try {
-    if (!walletIsConnected()) return null;
+    const { isConnected, getLocalStorage } = await stacksConnect();
+    if (!isConnected()) return null;
     const data = getLocalStorage();
     return data?.addresses?.stx?.[0]?.address ?? null;
   } catch (e) {
@@ -28,26 +29,38 @@ export function useWallet() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setAddress(currentAddress());
-    setReady(true);
+    let alive = true;
+    readAddress().then((a) => {
+      if (alive) {
+        setAddress(a);
+        setReady(true);
+      }
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const connect = useCallback(async () => {
     try {
+      const { connect: connectWallet } = await stacksConnect();
       // forceWalletSelect: always show the wallet chooser so the user picks
-      // their Stacks wallet (Xverse/Leather) explicitly — otherwise another
+      // their Stacks wallet (Leather/Xverse) explicitly — otherwise another
       // injected provider (e.g. MetaMask) can get auto-selected and fail.
-      // The choice is persisted, so later stx_callContract requests reuse it.
       await connectWallet({ forceWalletSelect: true });
-      setAddress(currentAddress());
+      setAddress(await readAddress());
     } catch (e) {
-      // user rejected / closed the modal — not an error worth surfacing
       console.warn("connect cancelled:", e);
     }
   }, []);
 
-  const disconnect = useCallback(() => {
-    disconnectWallet();
+  const disconnect = useCallback(async () => {
+    try {
+      const { disconnect: disconnectWallet } = await stacksConnect();
+      disconnectWallet();
+    } catch {
+      /* ignore */
+    }
     setAddress(null);
   }, []);
 

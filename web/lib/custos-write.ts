@@ -4,7 +4,8 @@
 // v8's request() API (WBIP-compatible — works with Xverse and current Leather).
 // Each call opens the wallet to sign an stx_callContract transaction.
 
-import { request } from "@stacks/connect";
+// @stacks/connect is imported lazily (see call()) to keep its heavy
+// WalletConnect dependency chain out of the SSR/hydration path.
 import {
   Cl,
   uintCV,
@@ -32,6 +33,7 @@ async function call(
   onCancel?: () => void
 ) {
   try {
+    const { request } = await import("@stacks/connect");
     const res = await request("stx_callContract", {
       contract: contractId as `${string}.${string}`,
       functionName,
