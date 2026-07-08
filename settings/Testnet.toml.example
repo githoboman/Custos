@@ -1,0 +1,15 @@
+# settings/Testnet.toml.example
+#
+# Copy this to settings/Testnet.toml and fill in a FUNDED testnet deployer
+# wallet's 24-word mnemonic. The real Testnet.toml is gitignored — never commit
+# a mnemonic. Fund the derived address from the faucet:
+#   https://explorer.hiro.so/sandbox/faucet?chain=testnet
+
+[network]
+name = "testnet"
+node_rpc_address = "https://api.testnet.hiro.so"
+deployment_fee_rate = 10
+
+[accounts.deployer]
+mnemonic = "<YOUR 24-WORD TESTNET DEPLOYER MNEMONIC HERE>"
+balance = 100_000_000_000_000

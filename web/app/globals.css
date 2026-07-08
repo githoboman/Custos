@@ -1,0 +1,190 @@
+/* Custos global stylesheet. Order: tokens -> Tailwind layers -> components. */
+
+@import "./custos-tokens.css";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    background-color: var(--custos-void);
+    color: var(--custos-text);
+    font-family: var(--custos-font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* faint paper-grain vignette — light, no glow */
+    background-image: radial-gradient(
+        1100px 550px at 50% -8%,
+        rgba(43, 92, 255, 0.04),
+        transparent 62%
+      ),
+      radial-gradient(
+        800px 500px at 100% 0%,
+        rgba(31, 157, 99, 0.035),
+        transparent 58%
+      );
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* serif, editorial headings — the "document of record" voice */
+  .font-serif {
+    font-family: var(--custos-font-serif);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--custos-accent);
+    outline-offset: 2px;
+    border-radius: var(--custos-radius-sm);
+  }
+
+  .tabular,
+  code,
+  kbd {
+    font-family: var(--custos-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .custos-card {
+    background-color: var(--custos-surface);
+    border: 1px solid var(--custos-border);
+    border-radius: var(--custos-radius-lg);
+    box-shadow: var(--custos-shadow);
+  }
+  .custos-card--raised {
+    background-color: var(--custos-surface-raised);
+    box-shadow: var(--custos-shadow-lg);
+  }
+  .custos-card--secured {
+    border-color: var(--custos-border-strong);
+    box-shadow: var(--custos-glow-gold);
+  }
+
+  .custos-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding: 0 1.25rem;
+    border-radius: var(--custos-radius);
+    font-weight: 600;
+    font-size: var(--custos-text-sm);
+    transition: all var(--custos-dur) var(--custos-ease);
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+  }
+  .custos-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .custos-btn--primary {
+    background-color: var(--custos-accent);
+    color: var(--custos-text-inverse);
+  }
+  .custos-btn--primary:hover:not(:disabled) {
+    background-color: var(--custos-accent-hover);
+    box-shadow: var(--custos-glow-accent);
+  }
+  .custos-btn--primary:active:not(:disabled) {
+    background-color: var(--custos-accent-press);
+  }
+  .custos-btn--secondary {
+    background-color: var(--custos-overlay);
+    color: var(--custos-text);
+    border-color: var(--custos-border);
+  }
+  .custos-btn--secondary:hover:not(:disabled) {
+    border-color: var(--custos-border-strong);
+  }
+  .custos-btn--danger {
+    background-color: transparent;
+    color: var(--custos-danger);
+    border-color: var(--custos-danger-soft);
+  }
+  .custos-btn--danger:hover:not(:disabled) {
+    background-color: var(--custos-danger-soft);
+  }
+
+  .custos-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--custos-radius-full);
+    font-size: var(--custos-text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .custos-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: var(--custos-radius-full);
+    background-color: currentColor;
+  }
+  .custos-badge--active {
+    color: var(--custos-state-active);
+    background-color: var(--custos-state-active-soft);
+  }
+  .custos-badge--delivered {
+    color: var(--custos-state-delivered);
+    background-color: var(--custos-state-delivered-soft);
+  }
+  .custos-badge--disputed {
+    color: var(--custos-state-disputed);
+    background-color: var(--custos-state-disputed-soft);
+  }
+  .custos-badge--paid,
+  .custos-badge--resolved {
+    color: var(--custos-state-paid);
+    background-color: var(--custos-state-paid-soft);
+  }
+  .custos-badge--reclaimed {
+    color: var(--custos-state-reclaimed);
+    background-color: var(--custos-state-reclaimed-soft);
+  }
+
+  .custos-input {
+    width: 100%;
+    height: 2.75rem;
+    padding: 0 0.875rem;
+    background-color: var(--custos-overlay);
+    border: 1px solid var(--custos-border);
+    border-radius: var(--custos-radius);
+    color: var(--custos-text);
+    font-size: var(--custos-text-sm);
+    transition: border-color var(--custos-dur) var(--custos-ease);
+  }
+  .custos-input::placeholder {
+    color: var(--custos-text-faint);
+  }
+  .custos-input:focus {
+    border-color: var(--custos-accent);
+    outline: none;
+  }
+
+  .custos-countdown {
+    font-family: var(--custos-font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--custos-text-muted);
+  }
+  .custos-countdown--warn {
+    color: var(--custos-warn);
+  }
+  .custos-countdown--danger {
+    color: var(--custos-danger);
+    animation: vault-pulse 2.4s var(--custos-ease) infinite;
+  }
+}

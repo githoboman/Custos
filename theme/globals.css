@@ -1,0 +1,198 @@
+/* ============================================================================
+   Custos global stylesheet (drop into app/globals.css)
+   Order matters: tokens first, then Tailwind layers, then component classes.
+   ========================================================================== */
+
+@import "./custos-tokens.css";
+
+/* Fonts — Inter for UI, JetBrains Mono for amounts/addresses/block heights.
+   Swap for next/font in the Next.js app if you prefer self-hosting. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--custos-void);
+    color: var(--custos-text);
+    font-family: var(--custos-font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* subtle vault vignette so the background isn't flat */
+    background-image: radial-gradient(
+        1200px 600px at 50% -10%,
+        rgba(47, 211, 154, 0.06),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 500px at 100% 0%,
+        rgba(79, 157, 255, 0.05),
+        transparent 55%
+      );
+    background-attachment: fixed;
+  }
+
+  /* consistent focus ring everywhere */
+  :focus-visible {
+    outline: 2px solid var(--custos-accent);
+    outline-offset: 2px;
+    border-radius: var(--custos-radius-sm);
+  }
+
+  /* amounts, addresses, block heights read as mono */
+  .tabular,
+  code,
+  kbd {
+    font-family: var(--custos-font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* -- The vault card: the core surface for retainers ------------------- */
+  .custos-card {
+    background-color: var(--custos-surface);
+    border: 1px solid var(--custos-border);
+    border-radius: var(--custos-radius-lg);
+    box-shadow: var(--custos-shadow);
+  }
+  .custos-card--raised {
+    background-color: var(--custos-surface-raised);
+    box-shadow: var(--custos-shadow-lg);
+  }
+  /* "secured" emphasis — for the escrowed-amount panel */
+  .custos-card--secured {
+    border-color: var(--custos-border-strong);
+    box-shadow: var(--custos-glow-gold);
+  }
+
+  /* -- Buttons ---------------------------------------------------------- */
+  .custos-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding: 0 1.25rem;
+    border-radius: var(--custos-radius);
+    font-weight: 600;
+    font-size: var(--custos-text-sm);
+    transition: all var(--custos-dur) var(--custos-ease);
+    cursor: pointer;
+    user-select: none;
+  }
+  .custos-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  /* primary = the trust action (create, approve, release) */
+  .custos-btn--primary {
+    background-color: var(--custos-accent);
+    color: var(--custos-text-inverse);
+  }
+  .custos-btn--primary:hover:not(:disabled) {
+    background-color: var(--custos-accent-hover);
+    box-shadow: var(--custos-glow-accent);
+  }
+  .custos-btn--primary:active:not(:disabled) {
+    background-color: var(--custos-accent-press);
+  }
+  /* secondary = neutral surface action */
+  .custos-btn--secondary {
+    background-color: var(--custos-overlay);
+    color: var(--custos-text);
+    border: 1px solid var(--custos-border);
+  }
+  .custos-btn--secondary:hover:not(:disabled) {
+    border-color: var(--custos-border-strong);
+  }
+  /* danger = dispute / destructive */
+  .custos-btn--danger {
+    background-color: transparent;
+    color: var(--custos-danger);
+    border: 1px solid var(--custos-danger-soft);
+  }
+  .custos-btn--danger:hover:not(:disabled) {
+    background-color: var(--custos-danger-soft);
+  }
+
+  /* -- Status badge: driven by the retainer's on-chain `state` ---------- */
+  .custos-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--custos-radius-full);
+    font-size: var(--custos-text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .custos-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: var(--custos-radius-full);
+    background-color: currentColor;
+  }
+  .custos-badge--active {
+    color: var(--custos-state-active);
+    background-color: var(--custos-state-active-soft);
+  }
+  .custos-badge--delivered {
+    color: var(--custos-state-delivered);
+    background-color: var(--custos-state-delivered-soft);
+  }
+  .custos-badge--disputed {
+    color: var(--custos-state-disputed);
+    background-color: var(--custos-state-disputed-soft);
+  }
+  .custos-badge--paid,
+  .custos-badge--resolved {
+    color: var(--custos-state-paid);
+    background-color: var(--custos-state-paid-soft);
+  }
+  .custos-badge--reclaimed {
+    color: var(--custos-state-reclaimed);
+    background-color: var(--custos-state-reclaimed-soft);
+  }
+
+  /* -- Input ------------------------------------------------------------ */
+  .custos-input {
+    width: 100%;
+    height: 2.75rem;
+    padding: 0 0.875rem;
+    background-color: var(--custos-overlay);
+    border: 1px solid var(--custos-border);
+    border-radius: var(--custos-radius);
+    color: var(--custos-text);
+    font-size: var(--custos-text-sm);
+    transition: border-color var(--custos-dur) var(--custos-ease);
+  }
+  .custos-input::placeholder {
+    color: var(--custos-text-faint);
+  }
+  .custos-input:focus {
+    border-color: var(--custos-accent);
+    outline: none;
+  }
+
+  /* -- Countdown chip (delivery / approval deadlines) ------------------- */
+  .custos-countdown {
+    font-family: var(--custos-font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--custos-text-muted);
+  }
+  .custos-countdown--warn {
+    color: var(--custos-warn);
+  }
+  .custos-countdown--danger {
+    color: var(--custos-danger);
+    animation: vault-pulse 2.4s var(--custos-ease) infinite;
+  }
+}

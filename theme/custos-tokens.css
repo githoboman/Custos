@@ -1,0 +1,105 @@
+/* ============================================================================
+   Custos design tokens — "the guardian vault"
+   ----------------------------------------------------------------------------
+   Custos (Latin: guardian / protector) holds a freelancer's escrow until it is
+   safely released. The visual language is a dark, secure vault: deep charcoal-
+   navy surfaces, a single emerald "trust" accent for safe value, and a set of
+   status colors mapped 1:1 to the on-chain retainer state machine.
+
+   This file is the single source of truth. Everything (Tailwind config,
+   component styles) reads these variables — never hardcode a hex elsewhere.
+   ========================================================================== */
+
+:root {
+  /* ---- Base surfaces (darkest -> lightest, the "vault") ---------------- */
+  --custos-void: #0a0e14; /* app background, the deep vault */
+  --custos-abyss: #0f151f; /* page sections */
+  --custos-surface: #151d2b; /* cards / panels */
+  --custos-surface-raised: #1c2637; /* raised cards, modals, popovers */
+  --custos-overlay: #232f43; /* hover surface, inputs */
+  --custos-border: #2a3648; /* hairline borders */
+  --custos-border-strong: #3a4a63; /* focused / emphasized borders */
+
+  /* ---- Text ------------------------------------------------------------ */
+  --custos-text: #e8eef7; /* primary text */
+  --custos-text-muted: #9aa8bd; /* secondary text, labels */
+  --custos-text-faint: #63728a; /* hints, disabled, timestamps */
+  --custos-text-inverse: #0a0e14; /* text on accent fills */
+
+  /* ---- Trust accent (emerald) — "value is safe / released" ------------- */
+  --custos-accent: #2fd39a; /* primary CTA, released funds, success */
+  --custos-accent-hover: #3ee0a8;
+  --custos-accent-press: #24b585;
+  --custos-accent-soft: rgba(47, 211, 154, 0.12); /* tint fills / badges */
+  --custos-accent-ring: rgba(47, 211, 154, 0.4); /* focus ring */
+
+  /* ---- Guardian gold — highlight for the "locked / escrowed" idea ------ */
+  --custos-gold: #d9a441; /* escrowed amount, emphasis */
+  --custos-gold-soft: rgba(217, 164, 65, 0.12);
+
+  /* ---- Retainer state colors (map to contract "state" field) ---------- */
+  /* active     — funded, awaiting delivery                                */
+  --custos-state-active: #4f9dff;
+  --custos-state-active-soft: rgba(79, 157, 255, 0.14);
+  /* delivered  — work submitted, client's window open                     */
+  --custos-state-delivered: #7c6cff;
+  --custos-state-delivered-soft: rgba(124, 108, 255, 0.14);
+  /* disputed   — frozen, awaiting mutual resolution                       */
+  --custos-state-disputed: #ff8a3d;
+  --custos-state-disputed-soft: rgba(255, 138, 61, 0.14);
+  /* paid       — escrow released to freelancer                            */
+  --custos-state-paid: #2fd39a;
+  --custos-state-paid-soft: rgba(47, 211, 154, 0.14);
+  /* resolved   — dispute split executed                                   */
+  --custos-state-resolved: #2fd39a;
+  --custos-state-resolved-soft: rgba(47, 211, 154, 0.14);
+  /* reclaimed  — returned to client (abandonment)                         */
+  --custos-state-reclaimed: #8a97ab;
+  --custos-state-reclaimed-soft: rgba(138, 151, 171, 0.14);
+
+  /* ---- Feedback -------------------------------------------------------- */
+  --custos-danger: #f0556b; /* errors, destructive, deadline missed */
+  --custos-danger-soft: rgba(240, 85, 107, 0.12);
+  --custos-warn: #ffc159; /* countdown warnings, near-deadline */
+  --custos-warn-soft: rgba(255, 193, 89, 0.12);
+  --custos-info: #4f9dff;
+  --custos-info-soft: rgba(79, 157, 255, 0.12);
+
+  /* ---- Typography ------------------------------------------------------ */
+  --custos-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --custos-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code",
+    Menlo, Consolas, monospace; /* amounts, addresses, block heights */
+
+  /* type scale */
+  --custos-text-xs: 0.75rem;
+  --custos-text-sm: 0.875rem;
+  --custos-text-base: 1rem;
+  --custos-text-lg: 1.125rem;
+  --custos-text-xl: 1.375rem;
+  --custos-text-2xl: 1.75rem;
+  --custos-text-3xl: 2.25rem;
+  --custos-text-4xl: 3rem;
+
+  /* ---- Radii ----------------------------------------------------------- */
+  --custos-radius-sm: 6px;
+  --custos-radius: 10px; /* default card/button radius */
+  --custos-radius-lg: 16px;
+  --custos-radius-xl: 22px;
+  --custos-radius-full: 9999px;
+
+  /* ---- Shadows & glow (the "vault" depth) ------------------------------ */
+  --custos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --custos-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --custos-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+  /* accent glow for the primary CTA / "secured" emphasis */
+  --custos-glow-accent: 0 0 0 1px var(--custos-accent-ring),
+    0 8px 30px rgba(47, 211, 154, 0.25);
+  --custos-glow-gold: 0 0 0 1px rgba(217, 164, 65, 0.35),
+    0 8px 30px rgba(217, 164, 65, 0.18);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --custos-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --custos-dur-fast: 120ms;
+  --custos-dur: 200ms;
+}

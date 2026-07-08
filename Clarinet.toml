@@ -1,0 +1,35 @@
+[project]
+name = "custos"
+description = "True-escrow retainer contract: client-funded, freelancer-claimable at unlock"
+authors = []
+telemetry = false
+cache_dir = ".cache"
+
+# The real SIP-010 trait that testnet usdcx implements. Pulled into simnet so
+# the same trait principal resolves locally and on testnet.
+[[project.requirements]]
+contract_id = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sip-010-trait-ft-standard"
+
+[contracts.mock-usdcx]
+path = "contracts/mock-usdcx.clar"
+clarity_version = 3
+epoch = "3.1"
+
+[contracts.mock-token-b]
+path = "contracts/mock-token-b.clar"
+clarity_version = 3
+epoch = "3.1"
+
+[contracts.custos]
+path = "contracts/custos.clar"
+clarity_version = 3
+epoch = "3.1"
+
+[repl.analysis]
+passes = ["check_checker"]
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = false
+trusted_caller = false
+callee_filter = false

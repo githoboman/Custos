@@ -1,0 +1,26 @@
+# --- secrets: NEVER commit the deployer mnemonic ---
+settings/Testnet.toml
+settings/Mainnet.toml
+.env
+.env*.local
+
+# --- Clarinet ---
+.cache/
+history.txt
+.requirements/
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+*.log
+
+# --- Next.js (web app has its own .gitignore too) ---
+web/node_modules/
+web/.next/
+web/out/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custos — theme preview</title>
+    <!-- Standalone preview. Inlines the SAME tokens/component classes as
+         theme/custos-tokens.css + globals.css so it renders with no build step.
+         Open directly in a browser. This is a design check, not app code. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ---- tokens (mirror of custos-tokens.css) ---- */
+      :root {
+        --custos-void: #0a0e14;
+        --custos-abyss: #0f151f;
+        --custos-surface: #151d2b;
+        --custos-surface-raised: #1c2637;
+        --custos-overlay: #232f43;
+        --custos-border: #2a3648;
+        --custos-border-strong: #3a4a63;
+        --custos-text: #e8eef7;
+        --custos-text-muted: #9aa8bd;
+        --custos-text-faint: #63728a;
+        --custos-text-inverse: #0a0e14;
+        --custos-accent: #2fd39a;
+        --custos-accent-hover: #3ee0a8;
+        --custos-accent-press: #24b585;
+        --custos-accent-soft: rgba(47, 211, 154, 0.12);
+        --custos-accent-ring: rgba(47, 211, 154, 0.4);
+        --custos-gold: #d9a441;
+        --custos-gold-soft: rgba(217, 164, 65, 0.12);
+        --custos-state-active: #4f9dff;
+        --custos-state-active-soft: rgba(79, 157, 255, 0.14);
+        --custos-state-delivered: #7c6cff;
+        --custos-state-delivered-soft: rgba(124, 108, 255, 0.14);
+        --custos-state-disputed: #ff8a3d;
+        --custos-state-disputed-soft: rgba(255, 138, 61, 0.14);
+        --custos-state-paid: #2fd39a;
+        --custos-state-paid-soft: rgba(47, 211, 154, 0.14);
+        --custos-state-reclaimed: #8a97ab;
+        --custos-state-reclaimed-soft: rgba(138, 151, 171, 0.14);
+        --custos-danger: #f0556b;
+        --custos-danger-soft: rgba(240, 85, 107, 0.12);
+        --custos-warn: #ffc159;
+        --custos-font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+        --custos-font-mono: "JetBrains Mono", ui-monospace, monospace;
+        --custos-radius-sm: 6px;
+        --custos-radius: 10px;
+        --custos-radius-lg: 16px;
+        --custos-radius-full: 9999px;
+        --custos-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        --custos-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+        --custos-glow-accent: 0 0 0 1px var(--custos-accent-ring),
+          0 8px 30px rgba(47, 211, 154, 0.25);
+        --custos-glow-gold: 0 0 0 1px rgba(217, 164, 65, 0.35),
+          0 8px 30px rgba(217, 164, 65, 0.18);
+        --custos-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background-color: var(--custos-void);
+        color: var(--custos-text);
+        font-family: var(--custos-font-sans);
+        -webkit-font-smoothing: antialiased;
+        background-image: radial-gradient(1200px 600px at 50% -10%, rgba(47, 211, 154, 0.06), transparent 60%),
+          radial-gradient(900px 500px at 100% 0%, rgba(79, 157, 255, 0.05), transparent 55%);
+        background-attachment: fixed;
+        min-height: 100vh;
+        padding: 3rem 1.5rem;
+      }
+
+      .wrap { max-width: 920px; margin: 0 auto; }
+      .tabular, code { font-family: var(--custos-font-mono); font-variant-numeric: tabular-nums; }
+
+      /* header / brand */
+      .brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+      .brand-mark {
+        width: 40px; height: 40px; border-radius: var(--custos-radius);
+        display: grid; place-items: center;
+        background: linear-gradient(145deg, var(--custos-surface-raised), var(--custos-surface));
+        border: 1px solid var(--custos-border-strong);
+        box-shadow: var(--custos-glow-accent);
+      }
+      .brand-name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+      .brand-accent { color: var(--custos-accent); }
+      .subtitle { color: var(--custos-text-muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+      .section-label {
+        text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem;
+        color: var(--custos-text-faint); font-weight: 600; margin: 2.5rem 0 1rem;
+      }
+
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+      @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+      /* cards */
+      .custos-card {
+        background-color: var(--custos-surface);
+        border: 1px solid var(--custos-border);
+        border-radius: var(--custos-radius-lg);
+        box-shadow: var(--custos-shadow);
+        padding: 1.5rem;
+      }
+      .custos-card--secured { border-color: var(--custos-border-strong); box-shadow: var(--custos-glow-gold); }
+
+      .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; }
+      .card-title { font-weight: 600; font-size: 1.05rem; }
+      .card-sub { color: var(--custos-text-faint); font-size: 0.8rem; margin-top: 0.15rem; }
+
+      .amount { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; }
+      .amount small { font-size: 0.85rem; color: var(--custos-text-muted); font-weight: 400; }
+      .amount--gold { color: var(--custos-gold); }
+      .amount--accent { color: var(--custos-accent); }
+
+      .row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--custos-border); font-size: 0.9rem; }
+      .row:last-child { border-bottom: 0; }
+      .row .k { color: var(--custos-text-muted); }
+      .row .v { color: var(--custos-text); }
+
+      /* badges */
+      .custos-badge {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.2rem 0.6rem; border-radius: var(--custos-radius-full);
+        font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+      }
+      .custos-badge::before { content: ""; width: 0.45rem; height: 0.45rem; border-radius: 9999px; background-color: currentColor; }
+      .b-active { color: var(--custos-state-active); background: var(--custos-state-active-soft); }
+      .b-delivered { color: var(--custos-state-delivered); background: var(--custos-state-delivered-soft); }
+      .b-disputed { color: var(--custos-state-disputed); background: var(--custos-state-disputed-soft); }
+      .b-paid { color: var(--custos-state-paid); background: var(--custos-state-paid-soft); }
+      .b-reclaimed { color: var(--custos-state-reclaimed); background: var(--custos-state-reclaimed-soft); }
+
+      /* buttons */
+      .btns { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+      .custos-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        height: 2.75rem; padding: 0 1.25rem; border-radius: var(--custos-radius);
+        font-weight: 600; font-size: 0.875rem; font-family: inherit;
+        transition: all 0.2s var(--custos-ease); cursor: pointer; border: 1px solid transparent;
+      }
+      .btn-primary { background: var(--custos-accent); color: var(--custos-text-inverse); }
+      .btn-primary:hover { background: var(--custos-accent-hover); box-shadow: var(--custos-glow-accent); }
+      .btn-secondary { background: var(--custos-overlay); color: var(--custos-text); border-color: var(--custos-border); }
+      .btn-secondary:hover { border-color: var(--custos-border-strong); }
+      .btn-danger { background: transparent; color: var(--custos-danger); border-color: var(--custos-danger-soft); }
+      .btn-danger:hover { background: var(--custos-danger-soft); }
+
+      /* inputs */
+      .field { margin-bottom: 1rem; }
+      .field label { display: block; font-size: 0.8rem; color: var(--custos-text-muted); margin-bottom: 0.4rem; }
+      .custos-input {
+        width: 100%; height: 2.75rem; padding: 0 0.875rem;
+        background: var(--custos-overlay); border: 1px solid var(--custos-border);
+        border-radius: var(--custos-radius); color: var(--custos-text); font-size: 0.875rem; font-family: inherit;
+      }
+      .custos-input:focus { border-color: var(--custos-accent); outline: none; }
+      .custos-input::placeholder { color: var(--custos-text-faint); }
+
+      /* wizard steps */
+      .steps { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+      .step { flex: 1; padding: 0.75rem; border-radius: var(--custos-radius); border: 1px solid var(--custos-border); background: var(--custos-abyss); font-size: 0.8rem; color: var(--custos-text-muted); }
+      .step.done { border-color: var(--custos-accent); color: var(--custos-accent); background: var(--custos-accent-soft); }
+      .step.active { border-color: var(--custos-border-strong); color: var(--custos-text); }
+      .step .num { font-family: var(--custos-font-mono); font-weight: 600; margin-right: 0.4rem; }
+
+      /* swatches */
+      .swatches { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+      .sw { width: 92px; }
+      .sw .chip { height: 52px; border-radius: var(--custos-radius); border: 1px solid rgba(255,255,255,0.06); }
+      .sw .lbl { font-size: 0.68rem; color: var(--custos-text-muted); margin-top: 0.35rem; }
+      .sw .hex { font-family: var(--custos-font-mono); font-size: 0.62rem; color: var(--custos-text-faint); }
+
+      .countdown { font-family: var(--custos-font-mono); font-variant-numeric: tabular-nums; }
+      .cd-warn { color: var(--custos-warn); }
+      .cd-danger { color: var(--custos-danger); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <div class="brand-mark">
+          <!-- shield / guardian glyph -->
+          <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+            <path d="M10 1L18 4V10C18 15 14.5 19 10 21C5.5 19 2 15 2 10V4L10 1Z"
+              stroke="var(--custos-accent)" stroke-width="1.5" fill="var(--custos-accent-soft)" />
+            <path d="M6.5 11L9 13.5L14 8" stroke="var(--custos-accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="brand-name">Cust<span class="brand-accent">os</span></div>
+      </div>
+      <p class="subtitle">Real escrow for freelance retainers. Held safe until it's meant to move.</p>
+
+      <!-- ============ RETAINER CARDS (states) ============ -->
+      <div class="section-label">Retainer cards — one per on-chain state</div>
+      <div class="grid">
+        <!-- active -->
+        <div class="custos-card">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Landing page redesign</div>
+              <div class="card-sub">#0 · to <span class="tabular">ST96…56GN</span></div>
+            </div>
+            <span class="custos-badge b-active">active</span>
+          </div>
+          <div class="amount amount--gold">8,000 <small>USDCx escrowed</small></div>
+          <div style="margin-top:1rem">
+            <div class="row"><span class="k">Upfront paid</span><span class="v tabular">2,000 USDCx</span></div>
+            <div class="row"><span class="k">Delivery deadline</span><span class="v countdown cd-warn">~ 14 blocks left</span></div>
+          </div>
+        </div>
+
+        <!-- delivered -->
+        <div class="custos-card">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Brand identity pack</div>
+              <div class="card-sub">#1 · to <span class="tabular">ST2J…5NNC</span></div>
+            </div>
+            <span class="custos-badge b-delivered">delivered</span>
+          </div>
+          <div class="amount amount--gold">12,500 <small>USDCx escrowed</small></div>
+          <div class="btns">
+            <button class="custos-btn btn-primary">Approve &amp; release</button>
+            <button class="custos-btn btn-danger">Dispute</button>
+          </div>
+          <div class="row" style="margin-top:0.75rem;border-bottom:0">
+            <span class="k">Approve within</span><span class="v countdown cd-danger">3 blocks — auto-releases after</span>
+          </div>
+        </div>
+
+        <!-- disputed -->
+        <div class="custos-card custos-card--secured">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Mobile app build</div>
+              <div class="card-sub">#2 · frozen</div>
+            </div>
+            <span class="custos-badge b-disputed">disputed</span>
+          </div>
+          <div class="amount">40,000 <small>USDCx frozen</small></div>
+          <div class="row" style="margin-top:0.75rem"><span class="k">Your proposal</span><span class="v tabular">25,000 → freelancer</span></div>
+          <div class="row"><span class="k">Their proposal</span><span class="v tabular" style="color:var(--custos-text-faint)">none yet</span></div>
+          <div class="btns">
+            <button class="custos-btn btn-secondary">Update split proposal</button>
+          </div>
+        </div>
+
+        <!-- paid -->
+        <div class="custos-card">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Copywriting sprint</div>
+              <div class="card-sub">#3 · settled</div>
+            </div>
+            <span class="custos-badge b-paid">paid</span>
+          </div>
+          <div class="amount amount--accent">6,000 <small>USDCx released</small></div>
+          <div class="row" style="margin-top:0.75rem;border-bottom:0"><span class="k">Released to</span><span class="v tabular">ST96…56GN</span></div>
+        </div>
+      </div>
+
+      <!-- ============ CREATE WIZARD ============ -->
+      <div class="section-label">Create retainer — 2-step wizard (FlowVault split + Custos escrow)</div>
+      <div class="custos-card custos-card--raised">
+        <div class="steps">
+          <div class="step done"><span class="num">1</span>Signing bonus via FlowVault</div>
+          <div class="step active"><span class="num">2</span>Lock retainer in escrow</div>
+        </div>
+        <div class="field">
+          <label>Freelancer address</label>
+          <input class="custos-input tabular" value="ST96PWHSZTR79Q04GEG0TF6WWE340VNHVV3C56GN" />
+        </div>
+        <div class="grid" style="gap:1rem">
+          <div class="field"><label>Escrow amount (USDCx)</label><input class="custos-input" placeholder="8,000" /></div>
+          <div class="field"><label>Delivery window (blocks)</label><input class="custos-input" placeholder="20" /></div>
+        </div>
+        <div class="btns">
+          <button class="custos-btn btn-primary">Sign &amp; lock escrow</button>
+          <button class="custos-btn btn-secondary">Back</button>
+        </div>
+      </div>
+
+      <!-- ============ PALETTE ============ -->
+      <div class="section-label">Palette</div>
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:var(--custos-void)"></div><div class="lbl">void</div><div class="hex">#0a0e14</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-surface)"></div><div class="lbl">surface</div><div class="hex">#151d2b</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-overlay)"></div><div class="lbl">overlay</div><div class="hex">#232f43</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-accent)"></div><div class="lbl">accent</div><div class="hex">#2fd39a</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-gold)"></div><div class="lbl">gold</div><div class="hex">#d9a441</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-state-active)"></div><div class="lbl">active</div><div class="hex">#4f9dff</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-state-delivered)"></div><div class="lbl">delivered</div><div class="hex">#7c6cff</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-state-disputed)"></div><div class="lbl">disputed</div><div class="hex">#ff8a3d</div></div>
+        <div class="sw"><div class="chip" style="background:var(--custos-danger)"></div><div class="lbl">danger</div><div class="hex">#f0556b</div></div>
+      </div>
+
+      <p style="margin-top:3rem;color:var(--custos-text-faint);font-size:0.78rem">
+        Custos theme preview · dark / vault · emerald = value safe · gold = escrowed · state colors map 1:1 to the contract's <code>state</code> field.
+      </p>
+    </div>
+  </body>
+</html>
