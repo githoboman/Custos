@@ -1,0 +1,9 @@
+{
+  "network": "testnet",
+  "chainId": 968,
+  "rpcUrl": "https://rpc.bohr.life",
+  "custosAddress": "0x36038b726A0cB94E5e9544483B81dD48358df486",
+  "mockTokenAddress": "0xBcBcC1824c769802A7872bC0599764e83506c757",
+  "deployerAddress": "0x196Bd1E60FB381D4AD9cd98c9952B512dc4D6d4E",
+  "deployedAt": "2026-09-08T11:26:01.570Z"
+}

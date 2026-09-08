@@ -3,10 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "scripts": { "test": "vitest run" },
+  "scripts": {
+    "test": "vitest run",
+    "compile:sol": "node scripts/compile.cjs",
+    "check:botchain": "node scripts/check-botchain.cjs",
+    "deploy:botchain:testnet": "node scripts/deploy-botchain.cjs --network testnet",
+    "deploy:botchain:mainnet": "node scripts/deploy-botchain.cjs --network mainnet"
+  },
   "devDependencies": {
     "@stacks/clarinet-sdk": "^3.21.0",
     "@stacks/transactions": "7.4.0",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.17.0",
+    "solc": "^0.8.36",
     "vitest": "^2.1.4"
   }
 }
