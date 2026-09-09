@@ -1,18 +1,5 @@
 import type { Config } from "tailwindcss";
 
-/**
- * Custos Tailwind theme.
- *
- * Consumes the CSS variables defined in `theme/custos-tokens.css` (import that
- * file once, globally, e.g. at the top of `app/globals.css`). Colors are wired
- * to vars so the palette stays in one place and can be re-themed without a
- * rebuild.
- *
- * Usage examples:
- *   bg-void  bg-surface  bg-surface-raised  border-line  text-muted
- *   text-accent  bg-accent  shadow-glow-accent
- *   bg-state-disputed-soft  text-state-disputed   (per retainer state)
- */
 const config: Config = {
   darkMode: "class",
   content: [
@@ -24,7 +11,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // surfaces
         void: "var(--custos-void)",
         abyss: "var(--custos-abyss)",
         surface: {
@@ -35,13 +21,11 @@ const config: Config = {
         line: "var(--custos-border)",
         "line-strong": "var(--custos-border-strong)",
 
-        // text (use as text-fg / text-muted / text-faint)
         fg: "var(--custos-text)",
         muted: "var(--custos-text-muted)",
         faint: "var(--custos-text-faint)",
         inverse: "var(--custos-text-inverse)",
 
-        // accent + gold
         accent: {
           DEFAULT: "var(--custos-accent)",
           hover: "var(--custos-accent-hover)",
@@ -53,7 +37,6 @@ const config: Config = {
           soft: "var(--custos-gold-soft)",
         },
 
-        // retainer state colors (state -> color + soft tint)
         state: {
           active: "var(--custos-state-active)",
           "active-soft": "var(--custos-state-active-soft)",
@@ -69,7 +52,6 @@ const config: Config = {
           "reclaimed-soft": "var(--custos-state-reclaimed-soft)",
         },
 
-        // feedback
         danger: {
           DEFAULT: "var(--custos-danger)",
           soft: "var(--custos-danger-soft)",
@@ -86,7 +68,7 @@ const config: Config = {
 
       fontFamily: {
         sans: "var(--custos-font-sans)",
-        serif: "var(--custos-font-serif)",
+        display: "var(--custos-font-display)",
         mono: "var(--custos-font-mono)",
       },
       fontSize: {
@@ -133,10 +115,20 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(6px) scale(0.98)" },
           "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
         },
+        "anime-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "anime-glow": {
+          "0%, 100%": { boxShadow: "0 0 5px var(--custos-accent-soft)" },
+          "50%": { boxShadow: "0 0 20px var(--custos-accent-soft), 0 0 40px var(--custos-accent-soft)" },
+        },
       },
       animation: {
         "vault-pulse": "vault-pulse 2.4s var(--custos-ease) infinite",
         "shield-in": "shield-in var(--custos-dur) var(--custos-ease)",
+        "anime-float": "anime-float 3s ease-in-out infinite",
+        "anime-glow": "anime-glow 2s ease-in-out infinite",
       },
     },
   },

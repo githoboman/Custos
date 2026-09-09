@@ -1,47 +1,35 @@
 // Central config: network, deployed contracts, token. Everything on-chain
 // flows through these constants so there is one place to change addresses.
 
-import { STACKS_TESTNET } from "@stacks/network";
+export const BOTCHAIN_TESTNET = {
+  name: "BOT Chain Testnet",
+  chainId: 968,
+  rpc: "https://rpc.bohr.life",
+  explorer: "https://scan.bohr.life",
+};
 
-export const NETWORK = STACKS_TESTNET;
+export const BOTCHAIN_MAINNET = {
+  name: "BOT Chain Mainnet",
+  chainId: 677,
+  rpc: "https://rpc.botchain.ai",
+  explorer: "https://scan.botchain.ai",
+};
+
+export const NETWORK = BOTCHAIN_TESTNET;
 export const NETWORK_NAME = "testnet" as const;
 
-// Deployed Custos escrow contract (see CLAUDE.md).
-export const CUSTOS_ADDRESS = "ST9NSDHK5969YF6WJ2MRCVVAVTDENWBNTFJRVZ3E";
-export const CUSTOS_NAME = "custos";
-export const CUSTOS_ID = `${CUSTOS_ADDRESS}.${CUSTOS_NAME}` as const;
-
-// Token the retainer is denominated in.
-//
-// TESTING MODE: using the mintable test-usdcx so any wallet can be funded via
-// the in-app "Mint" button. Real usdcx is Circle-bridge-only (no open mint,
-// hard to move between wallets), which blocks two-wallet testing.
-//
-// For the FINAL DEMO, switch to the real usdcx (custos is token-agnostic and
-// references the exact trait usdcx implements):
-//   TOKEN_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM"
-//   TOKEN_NAME    = "usdcx"      TOKEN_SYMBOL = "USDCx"
-export const TOKEN_ADDRESS = "ST9NSDHK5969YF6WJ2MRCVVAVTDENWBNTFJRVZ3E";
-export const TOKEN_NAME = "test-usdcx";
-export const TOKEN_ID = `${TOKEN_ADDRESS}.${TOKEN_NAME}` as const;
-export const TOKEN_SYMBOL = "tUSDCx";
+// Placeholder addresses — replace with actual deployed addresses.
+// The deploy script saves them to deployments/botchain-testnet.json.
+export const CUSTOS_ADDRESS = "0x0000000000000000000000000000000000000000";
+export const TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
+export const TOKEN_SYMBOL = "tUSDC";
 export const TOKEN_DECIMALS = 6;
 
-// Real usdcx (for the final demo swap).
-export const REAL_USDCX_ID =
-  "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.usdcx" as const;
+export const HIRO_API = "";
 
-// FlowVault (upfront-split leg) — used for the create wizard's step 1.
-export const FLOWVAULT_ADDRESS = "STD7QG84VQQ0C35SZM2EYTHZV4M8FQ0R7YNSQWPD";
-export const FLOWVAULT_NAME = "flowvault-v2";
-
-export const HIRO_API = "https://api.testnet.hiro.so";
-
-export const EXPLORER = "https://explorer.hiro.so";
-export const explorerTx = (txid: string) =>
-  `${EXPLORER}/txid/${txid}?chain=${NETWORK_NAME}`;
-export const explorerAddress = (addr: string) =>
-  `${EXPLORER}/address/${addr}?chain=${NETWORK_NAME}`;
+export const EXPLORER = NETWORK.explorer;
+export const explorerTx = (txid: string) => `${EXPLORER}/tx/${txid}`;
+export const explorerAddress = (addr: string) => `${EXPLORER}/address/${addr}`;
 
 export const APP_NAME = "Custos";
 export const APP_ICON = "/shield.svg";

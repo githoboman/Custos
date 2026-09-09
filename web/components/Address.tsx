@@ -6,16 +6,13 @@ import { explorerAddress } from "@/lib/config";
 
 interface Props {
   address: string;
-  viewer?: string | null; // if this === address, we mark it "You"
-  label?: string; // optional role label, e.g. "Client"
+  viewer?: string | null;
+  label?: string;
   showCopy?: boolean;
   link?: boolean;
   size?: "sm" | "md";
 }
 
-// One consistent way to render an address everywhere: a colour identicon dot so
-// parties are distinguishable, the short form, a "You" tag when it's the
-// connected wallet, and optional copy + explorer link.
 export function Address({
   address,
   viewer,

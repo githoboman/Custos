@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { getProfile, saveProfile, exportProfile } from "@/lib/profiles";
 
-// A freelancer creates/edits their public profile, keyed to their connected
-// wallet. Once saved, it shows up in the hirer-facing directory.
 export function ProfileForm({
   address,
   onSaved,
@@ -19,7 +17,6 @@ export function ProfileForm({
   const [bio, setBio] = useState("");
   const [saved, setSaved] = useState(false);
 
-  // load existing profile for this wallet
   useEffect(() => {
     const p = getProfile(address);
     if (p) {
@@ -48,7 +45,7 @@ export function ProfileForm({
   return (
     <div className="custos-card p-6">
       <div className="mb-4">
-        <h3 className="font-serif text-lg font-semibold text-fg">Your freelancer profile</h3>
+        <h3 className="font-display text-lg font-semibold text-fg">Your freelancer profile</h3>
         <p className="mt-1 text-sm text-muted">
           Fill this in so clients can find and hire you from the directory.
         </p>
@@ -66,7 +63,7 @@ export function ProfileForm({
         <input className="custos-input" value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="UI/UX, Figma, Design systems" />
       </Field>
       <Field label="Rate (optional)">
-        <input className="custos-input" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="e.g. 0.5 USDCx / milestone" />
+        <input className="custos-input" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="e.g. 0.5 USDC / milestone" />
       </Field>
       <Field label="Short bio (optional)">
         <textarea
@@ -86,7 +83,6 @@ export function ProfileForm({
         </span>
       </div>
 
-      {/* Share code — lets a client in another browser import this profile */}
       {getProfile(address) && <ShareCode address={address} />}
     </div>
   );
@@ -100,8 +96,8 @@ function ShareCode({ address }: { address: string }) {
     <div className="mt-5 rounded border border-line bg-abyss p-4">
       <div className="mb-1 text-xs font-medium text-fg">Share your profile</div>
       <p className="mb-2 text-xs text-muted">
-        Testing across two browsers? Copy this code and paste it into the client&apos;s
-        “Find freelancers” page so they can hire you.
+        Testing across two browsers? Copy this code and paste it into the client's
+        "Find freelancers" page so they can hire you.
       </p>
       <div className="flex gap-2">
         <input readOnly value={code} className="custos-input tabular text-xs" onFocus={(e) => e.target.select()} />

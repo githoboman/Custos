@@ -1,101 +1,105 @@
 // Read-only views of the deployed custos contract + token balances.
 
-import {
-  fetchCallReadOnlyFunction,
-  cvToValue,
-  uintCV,
-  standardPrincipalCV,
-} from "@stacks/transactions";
-import {
-  CUSTOS_ADDRESS,
-  CUSTOS_NAME,
-  NETWORK,
-  TOKEN_ADDRESS,
-  TOKEN_NAME,
-} from "./config";
+import { ethers } from "ethers";
+import { CUSTOS_ADDRESS, TOKEN_ADDRESS, NETWORK } from "./config";
 import type { Retainer, RetainerState } from "./types";
 
-async function readCustos(fn: string, args: any[], sender: string) {
-  return fetchCallReadOnlyFunction({
-    contractAddress: CUSTOS_ADDRESS,
-    contractName: CUSTOS_NAME,
-    functionName: fn,
-    functionArgs: args,
-    senderAddress: sender,
-    network: NETWORK,
-  });
+const CUSTOS_ABI: ethers.InterfaceAbi = [
+  "function nextId() external view returns (uint256)",
+  "function getRetainer(uint256 id) external view returns (tuple(address client, address freelancer, address token, uint256 upfrontAmount, uint256 lockAmount, uint256 deliveryDeadline, uint256 approvalWindow, uint256 approvalDeadline, uint8 state))",
+  "function getDisputeProposal(uint256 id, address proposer) external view returns (uint256 amount, bool proposed)",
+];
+
+const TOKEN_ABI: ethers.InterfaceAbi = [
+  "function balanceOf(address owner) external view returns (uint256)",
+  "function decimals() external view returns (uint8)",
+];
+
+let provider: ethers.JsonRpcProvider | null = null;
+
+function getProvider() {
+  if (!provider) {
+    provider = new ethers.JsonRpcProvider(NETWORK.rpc);
+  }
+  return provider;
 }
 
-export async function getNextId(sender: string): Promise<number> {
-  const cv = await readCustos("get-next-id", [], sender);
-  return Number(cvToValue(cv));
+const STATE_MAP: Record<number, RetainerState> = {
+  0: "Active",
+  1: "Delivered",
+  2: "Disputed",
+  3: "Paid",
+  4: "Resolved",
+  5: "Reclaimed",
+};
+
+async function readCustos<T>(fn: string, args: unknown[]): Promise<T> {
+  const contract = new ethers.Contract(CUSTOS_ADDRESS, CUSTOS_ABI, getProvider());
+  const result = await contract[fn](...args);
+  return result as T;
 }
 
-export async function getRetainer(
-  id: number,
-  sender: string
-): Promise<Retainer | null> {
-  const cv = await readCustos("get-retainer", [uintCV(id)], sender);
-  const val = cvToValue(cv);
-  // (optional ...) => cvToValue gives { type, value } or null when none
-  const tuple = val?.value ?? val;
-  if (!tuple || typeof tuple !== "object" || !tuple.state) return null;
+export async function getNextId(): Promise<bigint> {
+  const id = await readCustos<bigint>("nextId", []);
+  return id;
+}
 
-  const g = (k: string) => tuple[k]?.value ?? tuple[k];
+export async function getRetainer(id: number): Promise<Retainer | null> {
+  const r = await readCustos<{
+    client: string;
+    freelancer: string;
+    token: string;
+    upfrontAmount: bigint;
+    lockAmount: bigint;
+    deliveryDeadline: bigint;
+    approvalWindow: bigint;
+    approvalDeadline: bigint;
+    state: number;
+  }>("getRetainer", [BigInt(id)]);
+
+  if (!r || r.client === ethers.ZeroAddress) return null;
+
   return {
-    id,
-    client: String(g("client")),
-    freelancer: String(g("freelancer")),
-    token: String(g("token")),
-    upfrontAmount: BigInt(g("upfront-amount")),
-    lockAmount: BigInt(g("lock-amount")),
-    deliveryDeadline: Number(g("delivery-deadline")),
-    approvalWindow: Number(g("approval-window")),
-    approvalDeadline: Number(g("approval-deadline")),
-    state: String(g("state")) as RetainerState,
+    id: BigInt(id),
+    client: r.client,
+    freelancer: r.freelancer,
+    token: r.token,
+    upfrontAmount: r.upfrontAmount,
+    lockAmount: r.lockAmount,
+    deliveryDeadline: Number(r.deliveryDeadline),
+    approvalWindow: Number(r.approvalWindow),
+    approvalDeadline: Number(r.approvalDeadline),
+    state: STATE_MAP[r.state] ?? "Active",
   };
 }
 
-// Fetch all retainers 0..next-1. Fine for a demo; a production app would index.
-export async function getAllRetainers(sender: string): Promise<Retainer[]> {
-  const next = await getNextId(sender);
-  const ids = Array.from({ length: next }, (_, i) => i);
-  const results = await Promise.all(ids.map((id) => getRetainer(id, sender)));
+export async function getAllRetainers(): Promise<Retainer[]> {
+  const next = await getNextId();
+  const ids = Array.from({ length: Number(next) }, (_, i) => i);
+  const results = await Promise.all(ids.map((id) => getRetainer(id)));
   return results.filter((r): r is Retainer => r !== null).reverse();
 }
 
 export async function getDisputeProposal(
   id: number,
-  proposer: string,
-  sender: string
+  proposer: string
 ): Promise<bigint | null> {
-  const cv = await readCustos(
-    "get-dispute-proposal",
-    [uintCV(id), standardPrincipalCV(proposer)],
-    sender
+  const result = await readCustos<{ amount: bigint; proposed: boolean }>(
+    "getDisputeProposal",
+    [BigInt(id), proposer]
   );
-  const val = cvToValue(cv);
-  const inner = val?.value ?? val;
-  if (inner === null || inner === undefined) return null;
-  return BigInt(inner);
+  if (!result.proposed) return null;
+  return result.amount;
 }
 
 export async function getTokenBalance(who: string): Promise<bigint> {
-  const cv = await fetchCallReadOnlyFunction({
-    contractAddress: TOKEN_ADDRESS,
-    contractName: TOKEN_NAME,
-    functionName: "get-balance",
-    functionArgs: [standardPrincipalCV(who)],
-    senderAddress: who,
-    network: NETWORK,
-  });
-  const val = cvToValue(cv);
-  return BigInt(val?.value ?? val ?? 0);
+  const contract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, getProvider());
+  const bal = await contract.balanceOf(who);
+  return bal;
 }
 
-// Current stacks block height (for deadline countdowns).
 export async function getBlockHeight(): Promise<number> {
-  const res = await fetch(`${NETWORK.client.baseUrl}/v2/info`);
-  const info = await res.json();
-  return Number(info.stacks_tip_height ?? 0);
+  const provider = getProvider();
+  const block = await provider.getBlockNumber();
+  return block;
 }

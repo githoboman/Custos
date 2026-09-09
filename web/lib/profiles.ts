@@ -1,17 +1,11 @@
 // Freelancer profiles — DEMO storage in the browser's localStorage.
-//
-// NOTE: this is intentionally demo-scoped. Profiles live only in the browser
-// that created them; they do NOT sync across devices/browsers. This is enough
-// to demo the "freelancer creates a profile -> hirer browses & hires" flow
-// while we're still testing. A production version would move this to an
-// on-chain registry or a shared backend.
 
 export interface Profile {
-  address: string; // Stacks address (the key)
+  address: string;
   name: string;
-  title: string; // e.g. "Frontend developer"
+  title: string;
   skills: string[];
-  rate?: string; // free text, e.g. "0.5 USDCx / milestone"
+  rate?: string;
   bio?: string;
   createdAt: number;
 }
@@ -54,11 +48,6 @@ export function deleteProfile(address: string) {
   write(all);
 }
 
-// --- Cross-browser sharing -------------------------------------------------
-// Because storage is per-browser, a freelancer can export their profile as a
-// short base64 code and the client can import it. This makes the two-wallet
-// test work across different browsers/incognito without a backend.
-
 export function exportProfile(address: string): string | null {
   const p = getProfile(address);
   if (!p) return null;
@@ -72,7 +61,7 @@ export function exportProfile(address: string): string | null {
 export function importProfile(code: string): Profile | null {
   try {
     const p = JSON.parse(decodeURIComponent(escape(atob(code.trim())))) as Profile;
-    if (!p.address || !/^ST[0-9A-Z]{38,40}$/.test(p.address)) return null;
+    if (!p.address || !/^0x[a-fA-F0-9]{40}$/.test(p.address)) return null;
     saveProfile(p);
     return p;
   } catch {
@@ -80,28 +69,26 @@ export function importProfile(code: string): Profile | null {
   }
 }
 
-// Seed a couple of sample profiles the first time, so the directory isn't
-// empty on a fresh browser. Only runs if there are zero profiles.
 export function seedIfEmpty() {
   if (typeof window === "undefined") return;
   if (Object.keys(read()).length > 0) return;
   const samples: Profile[] = [
     {
-      address: "ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG",
+      address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18",
       name: "Ava Stone",
       title: "Product designer",
       skills: ["UI/UX", "Figma", "Design systems"],
-      rate: "0.5 USDCx / milestone",
+      rate: "0.5 USDC / milestone",
       bio: "Sample profile. I design clean, trustworthy product interfaces.",
       createdAt: Date.now() - 200000,
     },
     {
-      address: "ST3NBRSFKX28FQ2ZJ1MAKX58HKHSDGNV5N7R21XCP",
+      address: "0x8Ba1f109551bD4328030126458ac136c22C501a3",
       name: "Milo Reyes",
       title: "Smart-contract developer",
-      skills: ["Clarity", "Stacks", "Testing"],
-      rate: "1 USDCx / milestone",
-      bio: "Sample profile. Clarity contracts with full test coverage.",
+      skills: ["Solidity", "EVM", "Testing"],
+      rate: "1 USDC / milestone",
+      bio: "Sample profile. Solidity contracts with full test coverage.",
       createdAt: Date.now() - 100000,
     },
   ];

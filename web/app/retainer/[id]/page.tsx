@@ -11,26 +11,26 @@ import { DisputePanel } from "@/components/DisputePanel";
 import { TxToasts, type TxNotice } from "@/components/TxToast";
 import { getRetainer, getBlockHeight } from "@/lib/custos-read";
 import { nextAction, type ActionKind } from "@/lib/next-action";
-import { formatAmount, blocksToRough } from "@/lib/format";
-import { CUSTOS_ID, TOKEN_SYMBOL, explorerAddress } from "@/lib/config";
+import { formatAmount } from "@/lib/format";
+import { CUSTOS_ADDRESS, TOKEN_SYMBOL, explorerAddress } from "@/lib/config";
 import * as write from "@/lib/custos-write";
 import type { Retainer } from "@/lib/types";
 
 const RUN: Record<
   Exclude<ActionKind, "none" | "resolve-dispute">,
-  (id: number, cb: (t: string) => void) => void
+  (id: bigint, cb: (t: string) => void) => void
 > = {
-  "mark-delivered": (id, cb) => write.markDelivered(id, cb),
-  "approve-and-release": (id, cb) => write.approveAndRelease(id, cb),
-  "auto-release": (id, cb) => write.autoRelease(id, cb),
-  dispute: (id, cb) => write.dispute(id, cb),
-  "reclaim-abandoned": (id, cb) => write.reclaimAbandoned(id, cb),
+  "mark-delivered": (id, cb) => write.markDelivered(Number(id), cb),
+  "approve-and-release": (id, cb) => write.approveAndRelease(Number(id), cb),
+  "auto-release": (id, cb) => write.autoRelease(Number(id), cb),
+  dispute: (id, cb) => write.dispute(Number(id), cb),
+  "reclaim-abandoned": (id, cb) => write.reclaimAbandoned(Number(id), cb),
 };
 
 export default function RetainerDetail() {
   const params = useParams();
   const router = useRouter();
-  const id = Number(params.id);
+  const id = BigInt(params.id as string);
   const { address } = useWallet();
 
   const [r, setR] = useState<Retainer | null>(null);
@@ -39,18 +39,16 @@ export default function RetainerDetail() {
   const [busy, setBusy] = useState(false);
   const [notices, setNotices] = useState<TxNotice[]>([]);
 
-  const sender = address ?? CUSTOS_ID.split(".")[0];
-
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [ret, bh] = await Promise.all([getRetainer(id, sender), getBlockHeight()]);
+      const [ret, bh] = await Promise.all([getRetainer(Number(id)), getBlockHeight()]);
       setR(ret);
       setBlock(bh);
     } finally {
       setLoading(false);
     }
-  }, [id, sender]);
+  }, [id]);
 
   useEffect(() => {
     load();
@@ -88,14 +86,13 @@ export default function RetainerDetail() {
         <div className="custos-card p-8 text-center text-muted">Loading…</div>
       ) : !r ? (
         <div className="custos-card p-8 text-center text-muted">
-          Retainer #{id} not found.
+          Retainer #{id.toString()} not found.
         </div>
       ) : (
         <>
-          {/* header row */}
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <h1 className="font-serif text-2xl font-semibold tracking-tight text-fg">Retainer #{r.id}</h1>
+              <h1 className="font-display text-2xl font-semibold tracking-tight text-fg">Retainer #{r.id.toString()}</h1>
               <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                 <Address address={r.client} viewer={address} label="Client" showCopy={false} />
                 <span className="text-faint">hired</span>
@@ -105,12 +102,10 @@ export default function RetainerDetail() {
             <StateBadge state={r.state} />
           </div>
 
-          {/* timeline */}
           <div className="custos-card p-6 mb-6">
             <Timeline state={r.state} />
           </div>
 
-          {/* THE next action — the unmissable payment/step card */}
           {na && (
             <div
               className={`mb-6 p-6 ${
@@ -132,7 +127,6 @@ export default function RetainerDetail() {
                   >
                     {busy ? "Confirming…" : na.label}
                   </button>
-                  {/* dispute is offered alongside approve while the window is open */}
                   {na.kind === "approve-and-release" && (
                     <button
                       className="custos-btn custos-btn--danger"
@@ -153,14 +147,12 @@ export default function RetainerDetail() {
             </div>
           )}
 
-          {/* dispute negotiation */}
-          {r.state === "disputed" && (
+          {r.state === "Disputed" && (
             <div className="mb-6">
               <DisputePanel retainer={r} viewer={address} onTx={pushNotice} />
             </div>
           )}
 
-          {/* the facts */}
           <div className="custos-card p-6">
             <div className="mb-3 text-xs uppercase tracking-wider text-faint">
               Details
@@ -170,18 +162,18 @@ export default function RetainerDetail() {
             <Fact
               k="Delivery deadline"
               v={
-                r.deliveryDeadline > block
-                  ? `block ${r.deliveryDeadline} · ${blocksToRough(r.deliveryDeadline - block)}`
-                  : `block ${r.deliveryDeadline} (passed)`
+                r.deliveryDeadline > Math.floor(Date.now() / 1000)
+                  ? `timestamp ${r.deliveryDeadline}`
+                  : `timestamp ${r.deliveryDeadline} (passed)`
               }
             />
             {r.approvalDeadline > 0 && (
               <Fact
                 k="Approval deadline"
                 v={
-                  r.approvalDeadline > block
-                    ? `block ${r.approvalDeadline} · ${blocksToRough(r.approvalDeadline - block)}`
-                    : `block ${r.approvalDeadline} (passed)`
+                  r.approvalDeadline > Math.floor(Date.now() / 1000)
+                    ? `timestamp ${r.approvalDeadline}`
+                    : `timestamp ${r.approvalDeadline} (passed)`
                 }
               />
             )}
@@ -197,7 +189,7 @@ export default function RetainerDetail() {
         </>
       )}
 
-      <TxToasts notices={notices} onDismiss={(nid) => setNotices((n) => n.filter((x) => x.id !== nid))} />
+      <TxToasts notices={notices} onDismiss={(nid) => setNotices((n) => (n.filter((x) => x.id !== nid)))} />
     </main>
   );
 }

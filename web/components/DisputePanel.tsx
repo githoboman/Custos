@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Retainer } from "@/lib/types";
 import { formatAmount, parseAmount } from "@/lib/format";
 import { getDisputeProposal } from "@/lib/custos-read";
+import { TOKEN_SYMBOL } from "@/lib/config";
 import * as write from "@/lib/custos-write";
 
 interface Props {
@@ -19,16 +20,15 @@ export function DisputePanel({ retainer: r, viewer, onTx }: Props) {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const s = viewer ?? r.client;
-    getDisputeProposal(r.id, r.client, s).then(setClientProp).catch(() => {});
-    getDisputeProposal(r.id, r.freelancer, s).then(setFreelancerProp).catch(() => {});
-  }, [r.id, r.client, r.freelancer, viewer]);
+    getDisputeProposal(Number(r.id), r.client).then(setClientProp).catch(() => {});
+    getDisputeProposal(Number(r.id), r.freelancer).then(setFreelancerProp).catch(() => {});
+  }, [r.id, r.client, r.freelancer]);
 
   const submit = () => {
     const amount = parseAmount(input);
     if (amount > r.lockAmount) return;
     setBusy(true);
-    write.resolveDispute(r.id, amount, (txId) => {
+    write.resolveDispute(Number(r.id), amount, (txId) => {
       onTx("resolve-dispute", txId);
       setBusy(false);
     });
@@ -91,7 +91,7 @@ function Prop({ label, value }: { label: string; value: bigint | null }) {
         {value === null ? (
           <span className="text-faint">none yet</span>
         ) : (
-          `${formatAmount(value)} tUSDCx`
+          `${formatAmount(value)} ${TOKEN_SYMBOL}`
         )}
       </div>
     </div>

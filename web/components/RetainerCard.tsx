@@ -15,8 +15,6 @@ interface Props {
   blockHeight: number;
 }
 
-// Shows a party as their profile name (if they have one) with the address
-// underneath — so "the person I hired" reads as a name, not a hex string.
 function Party({
   who,
   viewer,
@@ -51,17 +49,14 @@ function Party({
   );
 }
 
-// A compact, clickable summary. The whole card links to the detail page where
-// the timeline + the one action live. The card's job is just: what is this, and
-// does it need MY attention right now.
 export function RetainerCard({ retainer: r, viewer, blockHeight }: Props) {
   const na = nextAction(r, viewer, blockHeight);
   const needsMe = na.primary && na.role !== "observer";
 
   const amountColor =
-    r.state === "paid" || r.state === "resolved"
+    r.state === "Paid" || r.state === "Resolved"
       ? "text-accent"
-      : r.state === "reclaimed"
+      : r.state === "Reclaimed"
         ? "text-muted"
         : "text-gold";
 
@@ -74,7 +69,7 @@ export function RetainerCard({ retainer: r, viewer, blockHeight }: Props) {
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="mb-1.5 text-xs text-faint">Retainer #{r.id}</div>
+          <div className="mb-1.5 text-xs text-faint">Retainer #{r.id.toString()}</div>
           {viewer === r.client ? (
             <Party who={r.freelancer} viewer={viewer} label="Freelancer" />
           ) : viewer === r.freelancer ? (
@@ -94,7 +89,6 @@ export function RetainerCard({ retainer: r, viewer, blockHeight }: Props) {
         <span className="text-sm font-normal text-muted">{TOKEN_SYMBOL}</span>
       </div>
 
-      {/* the "what's next" hint — always tells you the situation */}
       <div className="mt-3 flex items-center gap-2 border-t border-line pt-3">
         {needsMe && <span className="h-2 w-2 shrink-0 rounded-full bg-accent animate-vault-pulse" />}
         <span className={`text-sm ${needsMe ? "text-fg" : "text-muted"}`}>

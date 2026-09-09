@@ -1,59 +1,52 @@
 "use client";
 
-// Wallet-signed calls into the deployed custos contract, using @stacks/connect
-// v8's request() API (WBIP-compatible — works with Xverse and current Leather).
-// Each call opens the wallet to sign an stx_callContract transaction.
-
-// @stacks/connect is imported lazily (see call()) to keep its heavy
-// WalletConnect dependency chain out of the SSR/hydration path.
-import {
-  Cl,
-  uintCV,
-  standardPrincipalCV,
-  contractPrincipalCV,
-  type ClarityValue,
-} from "@stacks/transactions";
-import {
-  CUSTOS_ID,
-  NETWORK_NAME,
-  TOKEN_ADDRESS,
-  TOKEN_ID,
-  TOKEN_NAME,
-} from "./config";
+import { ethers } from "ethers";
+import { CUSTOS_ADDRESS, TOKEN_ADDRESS, NETWORK_NAME, NETWORK } from "./config";
 
 type OnFinish = (txId: string) => void;
 
-const tokenCV = () => contractPrincipalCV(TOKEN_ADDRESS, TOKEN_NAME);
+const CUSTOS_ABI: ethers.InterfaceAbi = [
+  "function createRetainer(address token, address freelancer, uint256 upfrontAmount, uint256 lockAmount, uint256 deliveryWindow, uint256 approvalWindow) external returns (uint256)",
+  "function markDelivered(uint256 id) external",
+  "function approveAndRelease(uint256 id) external",
+  "function autoRelease(uint256 id) external",
+  "function dispute(uint256 id) external",
+  "function resolveDispute(uint256 id, uint256 freelancerAmount) external returns (bool)",
+  "function reclaimAbandoned(uint256 id) external",
+];
 
-async function call(
-  contractId: string,
-  functionName: string,
-  functionArgs: ClarityValue[],
+const TOKEN_ABI: ethers.InterfaceAbi = [
+  "function transferFrom(address from, address to, uint256 value) external returns (bool)",
+  "function mint(address to, uint256 amount) external",
+];
+
+async function getSigner() {
+  if (!window.ethereum) throw new Error("No wallet found");
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  return await provider.getSigner();
+}
+
+async function sendTx(
+  contractAddress: string,
+  abi: ethers.InterfaceAbi,
+  fn: string,
+  args: unknown[],
   onFinish?: OnFinish,
   onCancel?: () => void
 ) {
   try {
-    const { request } = await import("@stacks/connect");
-    const res = await request("stx_callContract", {
-      contract: contractId as `${string}.${string}`,
-      functionName,
-      // Serialize to hex — the most robust arg format across Leather/Xverse.
-      functionArgs: functionArgs.map((a) => Cl.serialize(a)),
-      network: NETWORK_NAME,
-      // "allow" is REQUIRED: our contract moves SIP-010 tokens the wallet can't
-      // predict from post-conditions. Without this the wallet aborts/refuses
-      // ("transaction not going"). The contract itself enforces all amounts.
-      postConditionMode: "allow",
-    });
-    if (res?.txid) {
-      onFinish?.(res.txid);
+    const signer = await getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const tx = await contract[fn](...args);
+    const receipt = await tx.wait();
+    if (receipt && typeof receipt === "object" && "hash" in receipt) {
+      onFinish?.((receipt as { hash: string }).hash);
     } else {
-      console.warn(`${functionName}: no txid returned`, res);
       onCancel?.();
     }
   } catch (e) {
-    // user rejected in wallet, or the request failed
-    console.warn(`${functionName} cancelled/failed:`, e);
+    console.warn(`${fn} cancelled/failed:`, e);
     onCancel?.();
   }
 }
@@ -69,36 +62,30 @@ export function createRetainer(
   onFinish?: OnFinish,
   onCancel?: () => void
 ) {
-  return call(
-    CUSTOS_ID,
-    "create-retainer",
-    [
-      tokenCV(),
-      standardPrincipalCV(args.freelancer),
-      uintCV(args.upfront),
-      uintCV(args.lock),
-      uintCV(args.deliveryWindow),
-      uintCV(args.approvalWindow),
-    ],
+  sendTx(
+    CUSTOS_ADDRESS,
+    CUSTOS_ABI,
+    "createRetainer",
+    [TOKEN_ADDRESS, args.freelancer, args.upfront, args.lock, args.deliveryWindow, args.approvalWindow],
     onFinish,
     onCancel
   );
 }
 
 export function markDelivered(id: number, onFinish?: OnFinish, onCancel?: () => void) {
-  return call(CUSTOS_ID, "mark-delivered", [uintCV(id)], onFinish, onCancel);
+  sendTx(CUSTOS_ADDRESS, CUSTOS_ABI, "markDelivered", [BigInt(id)], onFinish, onCancel);
 }
 
 export function approveAndRelease(id: number, onFinish?: OnFinish, onCancel?: () => void) {
-  return call(CUSTOS_ID, "approve-and-release", [uintCV(id), tokenCV()], onFinish, onCancel);
+  sendTx(CUSTOS_ADDRESS, CUSTOS_ABI, "approveAndRelease", [BigInt(id)], onFinish, onCancel);
 }
 
 export function autoRelease(id: number, onFinish?: OnFinish, onCancel?: () => void) {
-  return call(CUSTOS_ID, "auto-release", [uintCV(id), tokenCV()], onFinish, onCancel);
+  sendTx(CUSTOS_ADDRESS, CUSTOS_ABI, "autoRelease", [BigInt(id)], onFinish, onCancel);
 }
 
 export function dispute(id: number, onFinish?: OnFinish, onCancel?: () => void) {
-  return call(CUSTOS_ID, "dispute", [uintCV(id)], onFinish, onCancel);
+  sendTx(CUSTOS_ADDRESS, CUSTOS_ABI, "dispute", [BigInt(id)], onFinish, onCancel);
 }
 
 export function resolveDispute(
@@ -107,26 +94,20 @@ export function resolveDispute(
   onFinish?: OnFinish,
   onCancel?: () => void
 ) {
-  return call(
-    CUSTOS_ID,
-    "resolve-dispute",
-    [uintCV(id), uintCV(freelancerAmount), tokenCV()],
+  sendTx(
+    CUSTOS_ADDRESS,
+    CUSTOS_ABI,
+    "resolveDispute",
+    [BigInt(id), freelancerAmount],
     onFinish,
     onCancel
   );
 }
 
 export function reclaimAbandoned(id: number, onFinish?: OnFinish, onCancel?: () => void) {
-  return call(CUSTOS_ID, "reclaim-abandoned", [uintCV(id), tokenCV()], onFinish, onCancel);
+  sendTx(CUSTOS_ADDRESS, CUSTOS_ABI, "reclaimAbandoned", [BigInt(id)], onFinish, onCancel);
 }
 
-// Mint test tokens to yourself (test-usdcx has an open mint), so demoers can
-// fund a wallet without leaving the app.
 export function mintTestTokens(amount: bigint, recipient: string, onFinish?: OnFinish) {
-  return call(
-    TOKEN_ID,
-    "mint",
-    [uintCV(amount), standardPrincipalCV(recipient)],
-    onFinish
-  );
+  sendTx(TOKEN_ADDRESS, TOKEN_ABI, "mint", [recipient, amount], onFinish);
 }

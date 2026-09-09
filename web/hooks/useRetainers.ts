@@ -1,40 +1,46 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getAllRetainers, getBlockHeight, getTokenBalance } from "@/lib/custos-read";
-import { CUSTOS_ID } from "@/lib/config";
+import {
+  getAllRetainers,
+  getBlockHeight,
+  getTokenBalance,
+} from "@/lib/custos-read";
 import type { Retainer } from "@/lib/types";
 import type { TxNotice } from "@/components/TxToast";
 
-// Shared data loader used by both role spaces: all retainers, current block,
-// and (if connected) the viewer's token balance. Returns a refresh() and a
-// pushNotice() that auto-refreshes after a tx has had time to confirm.
-export function useRetainers(address: string | null) {
+export function useRetainers() {
   const [retainers, setRetainers] = useState<Retainer[]>([]);
   const [block, setBlock] = useState(0);
   const [balance, setBalance] = useState<bigint | null>(null);
   const [loading, setLoading] = useState(true);
   const [notices, setNotices] = useState<TxNotice[]>([]);
 
-  const sender = address ?? CUSTOS_ID.split(".")[0];
-
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [rs, bh] = await Promise.all([getAllRetainers(sender), getBlockHeight()]);
+      const [rs, bh] = await Promise.all([getAllRetainers(), getBlockHeight()]);
       setRetainers(rs);
       setBlock(bh);
-      if (address) setBalance(await getTokenBalance(address));
     } catch (e) {
       console.error("load failed", e);
     } finally {
       setLoading(false);
     }
-  }, [sender, address]);
+  }, []);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  const refreshBalance = useCallback(async (address: string) => {
+    try {
+      const bal = await getTokenBalance(address);
+      setBalance(bal);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const pushNotice = useCallback(
     (label: string, txId: string) => {
@@ -45,9 +51,9 @@ export function useRetainers(address: string | null) {
   );
 
   const dismiss = useCallback(
-    (id: number) => setNotices((n) => n.filter((x) => x.id !== id)),
+    (id: number) => setNotices((n) => (n.filter((x) => x.id !== id))),
     []
   );
 
-  return { retainers, block, balance, loading, notices, refresh, pushNotice, dismiss };
+  return { retainers, block, balance, loading, notices, refresh, refreshBalance, pushNotice, dismiss };
 }

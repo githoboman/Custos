@@ -2,24 +2,26 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-// @stacks/connect v8 pulls in a large WalletConnect/Reown dependency chain.
-// We import it LAZILY (dynamic import) so it never runs during SSR/hydration —
-// only when the user actually reads or acts on their wallet. This avoids
-// blank-page hydration crashes on production (Vercel).
-
-async function stacksConnect() {
-  return import("@stacks/connect");
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+      on: (event: string, callback: (...args: unknown[]) => void) => void;
+      removeListener: (event: string, callback: (...args: unknown[]) => void) => void;
+      isMetaMask?: boolean;
+    };
+  }
 }
 
-async function readAddress(): Promise<string | null> {
-  if (typeof window === "undefined") return null;
+async function getAddress(): Promise<string | null> {
+  if (typeof window === "undefined" || !window.ethereum) return null;
   try {
-    const { isConnected, getLocalStorage } = await stacksConnect();
-    if (!isConnected()) return null;
-    const data = getLocalStorage();
-    return data?.addresses?.stx?.[0]?.address ?? null;
-  } catch (e) {
-    console.warn("wallet session read failed:", e);
+    const accounts = (await window.ethereum.request({
+      method: "eth_accounts",
+      params: [],
+    })) as string[];
+    return accounts[0] ?? null;
+  } catch {
     return null;
   }
 }
@@ -30,37 +32,47 @@ export function useWallet() {
 
   useEffect(() => {
     let alive = true;
-    readAddress().then((a) => {
+    getAddress().then((a) => {
       if (alive) {
         setAddress(a);
         setReady(true);
       }
     });
+
+    const handleAccounts = (accounts: unknown) => {
+      const accs = accounts as string[];
+      if (alive) setAddress(accs[0] ?? null);
+    };
+
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", handleAccounts);
+    }
+
     return () => {
       alive = false;
+      if (window.ethereum) {
+        window.ethereum.removeListener("accountsChanged", handleAccounts);
+      }
     };
   }, []);
 
   const connect = useCallback(async () => {
+    if (!window.ethereum) {
+      window.open("https://metamask.io/download/", "_blank");
+      return;
+    }
     try {
-      const { connect: connectWallet } = await stacksConnect();
-      // forceWalletSelect: always show the wallet chooser so the user picks
-      // their Stacks wallet (Leather/Xverse) explicitly — otherwise another
-      // injected provider (e.g. MetaMask) can get auto-selected and fail.
-      await connectWallet({ forceWalletSelect: true });
-      setAddress(await readAddress());
+      const accounts = (await window.ethereum.request({
+        method: "eth_requestAccounts",
+        params: [],
+      })) as string[];
+      setAddress(accounts[0] ?? null);
     } catch (e) {
       console.warn("connect cancelled:", e);
     }
   }, []);
 
-  const disconnect = useCallback(async () => {
-    try {
-      const { disconnect: disconnectWallet } = await stacksConnect();
-      disconnectWallet();
-    } catch {
-      /* ignore */
-    }
+  const disconnect = useCallback(() => {
     setAddress(null);
   }, []);
 

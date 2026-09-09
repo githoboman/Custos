@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useWallet } from "@/hooks/useWallet";
 import { Brand, ShieldMark } from "@/components/Brand";
 import { WalletButton } from "@/components/WalletButton";
-import { CUSTOS_ID, explorerAddress } from "@/lib/config";
+import { CUSTOS_ADDRESS, explorerAddress } from "@/lib/config";
 
 export default function Landing() {
   const { isConnected } = useWallet();
@@ -13,7 +13,6 @@ export default function Landing() {
 
   return (
     <main className="min-h-screen">
-      {/* top bar */}
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
         <Brand />
         <div className="flex items-center gap-3">
@@ -29,13 +28,12 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* hero */}
       <section className="mx-auto max-w-5xl px-6 pb-8 pt-14 text-center">
         <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs text-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-          Live on Stacks testnet · verifiable on-chain
+          Live on BOT Chain testnet · verifiable on-chain
         </div>
-        <h1 className="font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-fg sm:text-5xl">
+        <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight text-fg sm:text-5xl">
           Freelance payment,
           <br />
           <span className="text-accent">held in trust.</span>
@@ -62,15 +60,14 @@ export default function Landing() {
         </div>
         {!isConnected && (
           <p className="mt-4 text-xs text-faint">
-            Connect a Stacks wallet (Leather / Xverse) to act — you can browse
+            Connect an EVM wallet (MetaMask, etc.) to act — you can browse
             either space first.
           </p>
         )}
       </section>
 
-      {/* how it works */}
       <section className="mx-auto max-w-5xl px-6 py-14">
-        <h2 className="mb-8 text-center font-serif text-2xl font-semibold text-fg">
+        <h2 className="mb-8 text-center font-display text-2xl font-semibold text-fg">
           How a retainer flows
         </h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -81,7 +78,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* trust strip */}
       <section className="mx-auto max-w-5xl px-6 pb-16">
         <div className="custos-card grid gap-6 p-8 sm:grid-cols-3">
           <Trust
@@ -97,7 +93,7 @@ export default function Landing() {
             body={
               <>
                 Every action is a testnet transaction you can inspect.{" "}
-                <a href={explorerAddress(CUSTOS_ID)} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                <a href={explorerAddress(CUSTOS_ADDRESS)} target="_blank" rel="noreferrer" className="text-accent hover:underline">
                   View the contract ↗
                 </a>
               </>
@@ -109,7 +105,7 @@ export default function Landing() {
       <footer className="mx-auto max-w-5xl px-6 py-8 text-xs text-faint">
         <div className="flex items-center gap-2">
           <ShieldMark size={14} />
-          Custos · true escrow on Stacks · {CUSTOS_ID}
+          Custos · true escrow on BOT Chain · {CUSTOS_ADDRESS}
         </div>
       </footer>
     </main>
@@ -137,7 +133,7 @@ function RoleCard({
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className={`font-serif text-lg font-semibold ${primary ? "text-accent" : "text-fg"}`}>
+        <span className={`font-display text-lg font-semibold ${primary ? "text-accent" : "text-fg"}`}>
           {title}
         </span>
         <span className={primary ? "text-accent" : "text-faint"}>→</span>
@@ -157,7 +153,7 @@ function Flow({ n, title, body, verified }: { n: string; title: string; body: st
       >
         {verified ? "✓" : n}
       </div>
-      <div className="font-semibold text-fg">{title}</div>
+      <div className="font-display font-semibold text-fg">{title}</div>
       <p className="mt-1 text-sm text-muted">{body}</p>
     </div>
   );
@@ -166,7 +162,7 @@ function Flow({ n, title, body, verified }: { n: string; title: string; body: st
 function Trust({ title, body }: { title: string; body: React.ReactNode }) {
   return (
     <div>
-      <div className="mb-2 font-semibold text-fg">{title}</div>
+      <div className="mb-2 font-display font-semibold text-fg">{title}</div>
       <p className="text-sm leading-relaxed text-muted">{body}</p>
     </div>
   );

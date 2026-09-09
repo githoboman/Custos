@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
 import { useRetainers } from "@/hooks/useRetainers";
 import { Header } from "@/components/Header";
@@ -15,15 +15,19 @@ import { TOKEN_SYMBOL } from "@/lib/config";
 
 export default function FreelancerSpace() {
   const { address, isConnected } = useWallet();
-  const { retainers, block, balance, loading, notices, dismiss } =
-    useRetainers(address);
+  const { retainers, block, balance, loading, notices, dismiss, refreshBalance } =
+    useRetainers();
   const [showProfile, setShowProfile] = useState(false);
   const hasProfile = address ? !!getProfile(address) : false;
 
   const mine = retainers.filter((r) => r.freelancer === address);
   const earned = mine
-    .filter((r) => r.state === "paid" || r.state === "resolved")
+    .filter((r) => r.state === "Paid" || r.state === "Resolved")
     .reduce((sum, r) => sum + r.lockAmount, 0n);
+
+  useEffect(() => {
+    if (address) refreshBalance(address);
+  }, [address, refreshBalance]);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-8">
@@ -31,7 +35,7 @@ export default function FreelancerSpace() {
 
       <div className="mb-8">
         <div className="text-xs uppercase tracking-wider text-faint">Freelancer</div>
-        <h1 className="font-serif text-3xl font-semibold tracking-tight text-fg">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-fg">
           Work you&apos;ve been hired for
         </h1>
         <p className="mt-1 text-muted">
@@ -42,7 +46,7 @@ export default function FreelancerSpace() {
       {isConnected ? (
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Stat label="Your balance" value={`${balance === null ? "…" : formatAmount(balance)} ${TOKEN_SYMBOL}`} />
-          <Stat label="Active engagements" value={String(mine.filter((r) => r.state === "active" || r.state === "delivered" || r.state === "disputed").length)} />
+          <Stat label="Active engagements" value={String(mine.filter((r) => r.state === "Active" || r.state === "Delivered" || r.state === "Disputed").length)} />
           <Stat label="Released to you" value={`${formatAmount(earned)} ${TOKEN_SYMBOL}`} accent />
         </div>
       ) : (
@@ -96,7 +100,7 @@ export default function FreelancerSpace() {
       ) : (
         <div className="grid gap-5 sm:grid-cols-2">
           {mine.map((r) => (
-            <RetainerCard key={r.id} retainer={r} viewer={address} blockHeight={block} />
+            <RetainerCard key={r.id.toString()} retainer={r} viewer={address} blockHeight={block} />
           ))}
         </div>
       )}

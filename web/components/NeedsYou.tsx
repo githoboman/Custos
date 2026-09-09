@@ -4,8 +4,6 @@ import Link from "next/link";
 import type { Retainer } from "@/lib/types";
 import { nextAction } from "@/lib/next-action";
 
-// Surfaces the retainers that need THIS wallet to act, with the exact next
-// step. Shared by both role spaces so "what do I do now" is never hidden.
 export function NeedsYou({
   retainers,
   viewer,
@@ -33,12 +31,12 @@ export function NeedsYou({
           const na = nextAction(r, viewer, block);
           return (
             <Link
-              key={r.id}
+              key={r.id.toString()}
               href={`/retainer/${r.id}`}
               className="flex items-center justify-between rounded border border-line bg-surface px-4 py-2.5 no-underline transition-colors hover:border-line-strong"
             >
               <span className="text-sm text-fg">
-                <span className="tabular text-muted">#{r.id}</span> — {na.headline}
+                <span className="tabular text-muted">#{r.id.toString()}</span> — {na.headline}
               </span>
               <span className="shrink-0 text-sm font-medium text-accent">
                 {na.label || "view"} →

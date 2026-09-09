@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useWallet } from "@/hooks/useWallet";
 import { useRetainers } from "@/hooks/useRetainers";
@@ -13,10 +14,14 @@ import { TOKEN_SYMBOL } from "@/lib/config";
 
 export default function ClientSpace() {
   const { address, isConnected } = useWallet();
-  const { retainers, block, balance, loading, notices, pushNotice, dismiss, refresh } =
-    useRetainers(address);
+  const { retainers, block, balance, loading, notices, pushNotice, dismiss, refresh, refreshBalance } =
+    useRetainers();
 
   const mine = retainers.filter((r) => r.client === address);
+
+  useEffect(() => {
+    if (address) refreshBalance(address);
+  }, [address, refreshBalance]);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-8">
@@ -25,7 +30,7 @@ export default function ClientSpace() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="text-xs uppercase tracking-wider text-faint">Client</div>
-          <h1 className="font-serif text-3xl font-semibold tracking-tight text-fg">
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-fg">
             People you&apos;re hiring
           </h1>
           <p className="mt-1 text-muted">
@@ -44,7 +49,6 @@ export default function ClientSpace() {
 
       {isConnected ? (
         balance !== null && balance === 0n ? (
-          // New user, no funds yet — make the funding step unmissable.
           <div className="custos-card custos-card--secured mb-8 p-5">
             <div className="text-xs font-medium uppercase tracking-wider text-accent">
               Step 1 · Get test funds
@@ -119,7 +123,7 @@ export default function ClientSpace() {
       ) : (
         <div className="grid gap-5 sm:grid-cols-2">
           {mine.map((r) => (
-            <RetainerCard key={r.id} retainer={r} viewer={address} blockHeight={block} />
+            <RetainerCard key={r.id.toString()} retainer={r} viewer={address} blockHeight={block} />
           ))}
         </div>
       )}

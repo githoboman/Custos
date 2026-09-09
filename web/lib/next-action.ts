@@ -1,11 +1,8 @@
-// The brain that removes the "hidden button" problem: given a retainer, the
-// viewer, and the current block height, return the single most relevant next
-// action AND a plain-English explanation of the situation. Both the dashboard
-// card hint and the detail page use this, so guidance is always consistent.
-
 import type { Retainer } from "./types";
 import { formatAmount } from "./format";
 import { TOKEN_SYMBOL } from "./config";
+
+const now = () => Math.floor(Date.now() / 1000);
 
 export type ActionKind =
   | "mark-delivered"
@@ -18,11 +15,11 @@ export type ActionKind =
 
 export interface NextAction {
   kind: ActionKind;
-  label: string; // button text, e.g. "Approve & release 8,000 tUSDCx"
-  headline: string; // one-line status, e.g. "Waiting on you to approve"
-  detail: string; // plain-English explanation of what happens
+  label: string;
+  headline: string;
+  detail: string;
   role: "client" | "freelancer" | "anyone" | "observer";
-  primary: boolean; // is this THE action, or a secondary/neutral state
+  primary: boolean;
   danger?: boolean;
 }
 
@@ -34,11 +31,11 @@ export function nextAction(
   const isClient = !!viewer && viewer === r.client;
   const isFreelancer = !!viewer && viewer === r.freelancer;
   const amt = `${formatAmount(r.lockAmount)} ${TOKEN_SYMBOL}`;
-  const deliveryLeft = r.deliveryDeadline - block;
-  const approvalLeft = r.approvalDeadline - block;
+  const currentTimestamp = now();
+  const deliveryLeft = r.deliveryDeadline - currentTimestamp;
+  const approvalLeft = r.approvalDeadline - currentTimestamp;
 
-  // ---- active ----
-  if (r.state === "active") {
+  if (r.state === "Active") {
     if (isFreelancer && deliveryLeft > 0)
       return {
         kind: "mark-delivered",
@@ -64,7 +61,7 @@ export function nextAction(
         kind: "none",
         label: "",
         headline: "Waiting on the freelancer to deliver",
-        detail: `You've funded the escrow. The freelancer has ${deliveryLeft} blocks to mark the work delivered.`,
+        detail: `You've funded the escrow. The freelancer has ${formatTimeLeft(deliveryLeft)} to mark the work delivered.`,
         role: "client",
         primary: false,
       };
@@ -81,14 +78,13 @@ export function nextAction(
     return observer("Active — awaiting delivery from the freelancer.");
   }
 
-  // ---- delivered ----
-  if (r.state === "delivered") {
+  if (r.state === "Delivered") {
     if (isClient && approvalLeft > 0)
       return {
         kind: "approve-and-release",
         label: `Approve & release ${amt}`,
         headline: "The freelancer delivered — your move",
-        detail: `Release the escrowed ${amt} to the freelancer, or dispute if the work isn't right. You have ${approvalLeft} blocks before anyone can trigger auto-release.`,
+        detail: `Release the escrowed ${amt} to the freelancer, or dispute if the work isn't right. You have ${formatTimeLeft(approvalLeft)} before anyone can trigger auto-release.`,
         role: "client",
         primary: true,
       };
@@ -107,15 +103,14 @@ export function nextAction(
         kind: "none",
         label: "",
         headline: "Waiting on the client to approve",
-        detail: `You've delivered. The client has ${approvalLeft} blocks to approve or dispute. After that, anyone can trigger auto-release to pay you.`,
+        detail: `You've delivered. The client has ${formatTimeLeft(approvalLeft)} to approve or dispute. After that, anyone can trigger auto-release to pay you.`,
         role: "freelancer",
         primary: false,
       };
     return observer("Delivered — awaiting the client's approval.");
   }
 
-  // ---- disputed ----
-  if (r.state === "disputed") {
+  if (r.state === "Disputed") {
     if (isClient || isFreelancer)
       return {
         kind: "resolve-dispute",
@@ -129,12 +124,11 @@ export function nextAction(
     return observer("Disputed — the two parties are negotiating a split.");
   }
 
-  // ---- terminal states ----
-  if (r.state === "paid")
+  if (r.state === "Paid")
     return terminal("Paid", "The escrow was released to the freelancer.");
-  if (r.state === "resolved")
+  if (r.state === "Resolved")
     return terminal("Resolved", "The dispute was settled with an agreed split.");
-  if (r.state === "reclaimed")
+  if (r.state === "Reclaimed")
     return terminal(
       "Reclaimed",
       "The freelancer never delivered; the escrow returned to the client."
@@ -156,4 +150,12 @@ function observer(detail: string): NextAction {
 
 function terminal(headline: string, detail: string): NextAction {
   return { kind: "none", label: "", headline, detail, role: "observer", primary: false };
+}
+
+function formatTimeLeft(seconds: number): string {
+  if (seconds <= 0) return "now";
+  if (seconds < 60) return `~${seconds}s`;
+  if (seconds < 3600) return `~${Math.round(seconds / 60)}m`;
+  if (seconds < 86400) return `~${(seconds / 3600).toFixed(1)}h`;
+  return `~${(seconds / 86400).toFixed(1)}d`;
 }

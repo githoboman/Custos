@@ -1,7 +1,5 @@
 import type { RetainerState } from "@/lib/types";
 
-// The retainer journey as a horizontal stepper. The "current" step is where the
-// retainer is now; branches (dispute/reclaim) are reflected in the labels.
 type StepState = "done" | "current" | "todo" | "skipped";
 
 interface Step {
@@ -18,28 +16,27 @@ const STEPS: Step[] = [
 
 function stepStates(state: RetainerState): Record<string, StepState> {
   switch (state) {
-    case "active":
+    case "Active":
       return { funded: "current", delivered: "todo", approved: "todo", settled: "todo" };
-    case "delivered":
+    case "Delivered":
       return { funded: "done", delivered: "current", approved: "todo", settled: "todo" };
-    case "disputed":
+    case "Disputed":
       return { funded: "done", delivered: "done", approved: "current", settled: "todo" };
-    case "paid":
+    case "Paid":
       return { funded: "done", delivered: "done", approved: "done", settled: "done" };
-    case "resolved":
+    case "Resolved":
       return { funded: "done", delivered: "done", approved: "done", settled: "done" };
-    case "reclaimed":
+    case "Reclaimed":
       return { funded: "done", delivered: "skipped", approved: "skipped", settled: "done" };
     default:
       return {};
   }
 }
 
-// End label changes with outcome so "Settled" reads correctly.
 function settledLabel(state: RetainerState): string {
-  if (state === "paid") return "Paid";
-  if (state === "resolved") return "Split settled";
-  if (state === "reclaimed") return "Reclaimed";
+  if (state === "Paid") return "Paid";
+  if (state === "Resolved") return "Split settled";
+  if (state === "Reclaimed") return "Reclaimed";
   return "Settled";
 }
 

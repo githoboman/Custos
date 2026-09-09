@@ -1,8 +1,8 @@
-/* Custos global stylesheet. Order: tokens -> Tailwind layers -> components. */
+/* Custos global stylesheet — anime edition */
 
 @import "./custos-tokens.css";
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Russo+One&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -10,7 +10,7 @@
 
 @layer base {
   html {
-    color-scheme: light;
+    color-scheme: dark;
   }
   body {
     background-color: var(--custos-void);
@@ -18,22 +18,19 @@
     font-family: var(--custos-font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* faint paper-grain vignette — light, no glow */
-    background-image: radial-gradient(
-        1100px 550px at 50% -8%,
-        rgba(43, 92, 255, 0.04),
-        transparent 62%
-      ),
-      radial-gradient(
-        800px 500px at 100% 0%,
-        rgba(31, 157, 99, 0.035),
-        transparent 58%
-      );
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 229, 255, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 0%, rgba(255, 64, 129, 0.06), transparent);
     background-attachment: fixed;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* serif, editorial headings — the "document of record" voice */
+  .font-display {
+    font-family: var(--custos-font-display);
+    letter-spacing: 0.02em;
+  }
+
   .font-serif {
     font-family: var(--custos-font-serif);
     letter-spacing: -0.01em;
@@ -59,6 +56,19 @@
     border: 1px solid var(--custos-border);
     border-radius: var(--custos-radius-lg);
     box-shadow: var(--custos-shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .custos-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(255, 64, 129, 0.2));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
   }
   .custos-card--raised {
     background-color: var(--custos-surface-raised);
@@ -83,21 +93,25 @@
     cursor: pointer;
     user-select: none;
     border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
   }
   .custos-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
   .custos-btn--primary {
-    background-color: var(--custos-accent);
+    background: linear-gradient(135deg, var(--custos-accent), #00b8d4);
     color: var(--custos-text-inverse);
+    border-color: var(--custos-accent);
   }
   .custos-btn--primary:hover:not(:disabled) {
-    background-color: var(--custos-accent-hover);
     box-shadow: var(--custos-glow-accent);
+    transform: translateY(-1px);
   }
   .custos-btn--primary:active:not(:disabled) {
-    background-color: var(--custos-accent-press);
+    transform: translateY(0);
+    filter: brightness(0.9);
   }
   .custos-btn--secondary {
     background-color: var(--custos-overlay);
@@ -105,7 +119,8 @@
     border-color: var(--custos-border);
   }
   .custos-btn--secondary:hover:not(:disabled) {
-    border-color: var(--custos-border-strong);
+    border-color: var(--custos-accent);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
   }
   .custos-btn--danger {
     background-color: transparent;
@@ -165,7 +180,7 @@
     border-radius: var(--custos-radius);
     color: var(--custos-text);
     font-size: var(--custos-text-sm);
-    transition: border-color var(--custos-dur) var(--custos-ease);
+    transition: border-color var(--custos-dur) var(--custos-ease), box-shadow var(--custos-dur) var(--custos-ease);
   }
   .custos-input::placeholder {
     color: var(--custos-text-faint);
@@ -173,6 +188,7 @@
   .custos-input:focus {
     border-color: var(--custos-accent);
     outline: none;
+    box-shadow: 0 0 0 3px var(--custos-accent-soft);
   }
 
   .custos-countdown {

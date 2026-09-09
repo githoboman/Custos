@@ -7,8 +7,6 @@ import { Address } from "@/components/Address";
 import { useWallet } from "@/hooks/useWallet";
 import { listProfiles, seedIfEmpty, importProfile, type Profile } from "@/lib/profiles";
 
-// Hirer-facing directory: browse freelancer profiles and hire one directly
-// (prefilling the hire form with their address).
 export default function Directory() {
   const router = useRouter();
   const { address } = useWallet();
@@ -39,7 +37,7 @@ export default function Directory() {
 
       <div className="mb-8">
         <div className="text-xs uppercase tracking-wider text-faint">Directory</div>
-        <h1 className="font-serif text-3xl font-semibold tracking-tight text-fg">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-fg">
           Find a freelancer
         </h1>
         <p className="mt-1 text-muted">
@@ -47,7 +45,6 @@ export default function Directory() {
         </p>
       </div>
 
-      {/* Import a shared profile (for two-browser testing) */}
       <div className="custos-card mb-8 p-4">
         <div className="mb-2 text-xs font-medium text-fg">Have a freelancer&apos;s share code?</div>
         <div className="flex gap-2">
@@ -76,7 +73,7 @@ export default function Directory() {
               <div key={p.address} className="custos-card flex flex-col p-5">
                 <div className="mb-2 flex items-start justify-between">
                   <div>
-                    <div className="font-serif text-lg font-semibold text-fg">{p.name}</div>
+                    <div className="font-display text-lg font-semibold text-fg">{p.name}</div>
                     <div className="text-sm text-muted">{p.title}</div>
                   </div>
                   {p.rate && (

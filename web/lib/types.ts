@@ -1,27 +1,26 @@
 // Shared domain types mirroring the on-chain custos retainer.
 
 export type RetainerState =
-  | "active"
-  | "delivered"
-  | "disputed"
-  | "paid"
-  | "resolved"
-  | "reclaimed";
+  | "Active"
+  | "Delivered"
+  | "Disputed"
+  | "Paid"
+  | "Resolved"
+  | "Reclaimed";
 
 export interface Retainer {
-  id: number;
+  id: bigint;
   client: string;
   freelancer: string;
-  token: string; // token contract principal this retainer is denominated in
+  token: string;
   upfrontAmount: bigint;
   lockAmount: bigint;
-  deliveryDeadline: number; // stacks block height
+  deliveryDeadline: number;
   approvalWindow: number;
-  approvalDeadline: number; // 0 until delivered
+  approvalDeadline: number;
   state: RetainerState;
 }
 
-// Error codes from custos.clar, for turning contract errors into messages.
 export const CUSTOS_ERRORS: Record<number, string> = {
   100: "Retainer not found",
   101: "Not authorized for this action",

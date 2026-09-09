@@ -1,0 +1,37 @@
+=========================================================
+CUSTOS PROTOCOL — PITCH DECK & EXECUTIVE SUMMARY
+"Trustless Escrow & Freelance Retainers Native to BOT Chain"
+=========================================================
+
+1. EXECUTIVE SUMMARY
+Custos is a decentralized, non-custodial milestone escrow and retainer protocol built natively for the BOT Chain ecosystem. It eliminates counterparty risk for freelancers, service providers, DAOs, and gig workers by providing a programmable two-key escrow mechanism with automated release windows and trustless mutual dispute resolution.
+
+2. THE PROBLEM
+- $1.5+ Trillion Global Freelance & Contractor Economy: Web3 contracting is fraught with payment disputes, non-payment, and ghosting.
+- Centralized Freelance Platforms (Upwork, Fiverr) charge exorbitant 10%–20% fees, freeze accounts arbitrarily, and delay payouts.
+- Conventional Smart Contract Escrows lack flexible dispute handling: funds get permanently stuck if a dispute arises without centralized arbiter backdoors.
+
+3. THE SOLUTION: CUSTOS ON BOT CHAIN
+Custos provides an elegant, autonomous escrow architecture:
+- Instant Upfront Split: Supports instant upfront milestone payouts directly to contributors at agreement inception.
+- Non-Custodial Locked Escrow: Remaining retainer funds are held safely in audited smart contracts.
+- Automated Release Protection: Clients have a strict approval window following work delivery. If the client goes silent or abandons the deal, funds auto-release to the freelancer, preventing infinite stalling.
+- Mutual-Consent Dispute Resolution: If work is contested, both parties submit proposed settlement splits. When a consensus split is reached, funds settle immediately without centralized arbiter risk.
+- Abandonment Protection: If a contractor fails to deliver by the contractual deadline, the client reclaims full escrowed funds without friction.
+
+4. WHY BOT CHAIN?
+- High Throughput & Sub-Second Finality: Escrow interactions, milestone submissions, and approvals require quick confirmations and micro-fee interactions.
+- Gas Demand & Native Utility: Every retainer creation, delivery proof, dispute resolution, and payout consumes BOT for gas, driving constant organic on-chain activity and TVL retention.
+- AI-Native Ecosystem Compatibility: Custos serves as the natural payment and verification escrow rail for AI agents hiring human contractors or AI-to-AI autonomous service agreements on BOT Chain.
+
+5. TOKENOMICS & PROTOCOL METRICS
+- Retainer Currencies: Supports native BOT, USDC, USDT, and ecosystem ERC-20 tokens.
+- Protocol Fee: Micro 0.5% fee on successfully resolved escrow payouts, creating sustainable protocol treasury revenue and BOT buybacks.
+- Smart Contracts: Fully verified, EVM-compatible, and live on BOT Chain Testnet.
+
+6. ROADMAP
+- Phase 1 (Current): EVM Smart Contracts deployed on BOT Chain Testnet; initial developer integration & testing.
+- Phase 2: DApp Frontend launch with multi-wallet support (BO Wallet, MetaMask, RainbowKit).
+- Phase 3: AI Agent Escrow SDK — enabling autonomous AI agents on BOT Chain to hire & escrow funds trustlessly.
+- Phase 4: Mainnet deployment & DAO treasury integration across the BOT Chain ecosystem.
+=========================================================

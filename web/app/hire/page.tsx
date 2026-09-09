@@ -25,7 +25,7 @@ function HireInner() {
       <Header />
 
       <section className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight text-fg">Hire a freelancer</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-fg">Hire a freelancer</h1>
         <p className="mt-2 max-w-2xl text-muted">
           Make an offer backed by real escrow. Pay a signing bonus up front, then
           lock the rest in the Custos contract — released to the freelancer on
@@ -48,13 +48,13 @@ function HireInner() {
         />
       ) : (
         <div className="custos-card p-6 text-sm text-muted">
-          Connect a Stacks wallet (Leather / Xverse) to post a hire offer.
+          Connect an EVM wallet (MetaMask, etc.) to post a hire offer.
         </div>
       )}
 
       <TxToasts
         notices={notices}
-        onDismiss={(id) => setNotices((n) => n.filter((x) => x.id !== id))}
+        onDismiss={(id) => setNotices((n) => (n.filter((x) => x.id !== id)))}
       />
     </main>
   );

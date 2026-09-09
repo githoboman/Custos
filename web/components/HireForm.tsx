@@ -10,18 +10,13 @@ interface Props {
   viewer: string | null;
   onTx: (label: string, txId: string) => void;
   onDone?: () => void;
-  prefillAddress?: string; // when hiring from a directory profile
+  prefillAddress?: string;
   prefillRole?: string;
 }
 
-// Hire = ONE real transaction. create-retainer pays the signing bonus to the
-// freelancer AND locks the escrow, in a single signature. Both legs are real
-// on-chain (no stub). The escrow is released later on approval / auto-release /
-// dispute split.
 export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: Props) {
   const [role, setRole] = useState(prefillRole ?? "");
   const [freelancer, setFreelancer] = useState(prefillAddress ?? "");
-  // Low test values: 0.1 bonus + 0.5 escrow = 0.6 total per hire.
   const [upfront, setUpfront] = useState("0.1");
   const [lock, setLock] = useState("0.5");
   const [deliveryWindow, setDeliveryWindow] = useState("10");
@@ -35,7 +30,7 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
     setProfiles(listProfiles().filter((p) => p.address !== viewer));
   }, [viewer]);
 
-  const validAddr = /^ST[0-9A-Z]{38,40}$/.test(freelancer.trim());
+  const validAddr = /^0x[a-fA-F0-9]{40}$/.test(freelancer.trim());
   const selfHire = validAddr && freelancer.trim() === viewer;
   const upfrontBase = parseAmount(upfront);
   const lockBase = parseAmount(lock);
@@ -54,8 +49,8 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
     write.createRetainer(
       {
         freelancer: freelancer.trim(),
-        upfront: upfrontBase, // signing bonus, paid to freelancer immediately
-        lock: lockBase, // escrow, held by the contract
+        upfront: upfrontBase,
+        lock: lockBase,
         deliveryWindow: Number(deliveryWindow) || 0,
         approvalWindow: Number(approvalWindow) || 0,
       },
@@ -70,7 +65,6 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
 
   return (
     <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-      {/* form */}
       <div className="custos-card custos-card--raised p-6">
         <Field label="Role / engagement">
           <input
@@ -113,7 +107,7 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
               {profiles.length === 0 && (
                 <p className="mt-1 text-xs text-faint">
                   No freelancer profiles yet — use manual entry, or ask them to
-                  create a profile in “My work”.
+                  create a profile in "My work".
                 </p>
               )}
             </>
@@ -121,7 +115,7 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
             <>
               <input
                 className="custos-input tabular"
-                placeholder="ST…"
+                placeholder="0x..."
                 value={freelancer}
                 onChange={(e) => setFreelancer(e.target.value)}
               />
@@ -140,10 +134,10 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
             </>
           )}
           {freelancer && !validAddr && (
-            <p className="mt-1 text-xs text-danger">Not a valid Stacks address.</p>
+            <p className="mt-1 text-xs text-danger">Not a valid EVM address.</p>
           )}
           {selfHire && (
-            <p className="mt-1 text-xs text-danger">You can&apos;t hire yourself.</p>
+            <p className="mt-1 text-xs text-danger">You can't hire yourself.</p>
           )}
         </Field>
 
@@ -159,10 +153,10 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Delivery window (blocks)">
+          <Field label="Delivery window (seconds)">
             <input className="custos-input tabular" value={deliveryWindow} onChange={(e) => setDeliveryWindow(e.target.value)} />
           </Field>
-          <Field label="Approval window (blocks)">
+          <Field label="Approval window (seconds)">
             <input className="custos-input tabular" value={approvalWindow} onChange={(e) => setApprovalWindow(e.target.value)} />
           </Field>
         </div>
@@ -181,12 +175,11 @@ export function HireForm({ viewer, onTx, onDone, prefillAddress, prefillRole }: 
         </button>
         {busy && (
           <p className="mt-2 text-center text-xs text-faint">
-            Approve the transaction in Leather / Xverse.
+            Approve the transaction in MetaMask.
           </p>
         )}
       </div>
 
-      {/* live offer summary */}
       <aside className="custos-card p-5 h-fit">
         <div className="mb-3 text-xs uppercase tracking-wider text-faint">Offer summary</div>
         <SummaryRow k="Role" v={role || "—"} />
