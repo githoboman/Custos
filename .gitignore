@@ -1,13 +1,6 @@
-# --- secrets: NEVER commit the deployer mnemonic ---
-settings/Testnet.toml
-settings/Mainnet.toml
+# --- secrets: NEVER commit private keys ---
 .env
 .env*.local
-
-# --- Clarinet ---
-.cache/
-history.txt
-.requirements/
 
 # --- Node ---
 node_modules/

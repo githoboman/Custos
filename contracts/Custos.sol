@@ -16,7 +16,6 @@ interface IERC20 {
 /**
  * @title Custos
  * @notice Real (two-key) escrow for freelance retainers on BOT Chain, denominated in ERC-20 tokens.
- * Ported from custos.clar (Stacks) with complete state machine & security parity.
  *
  * State machine per retainer:
  *

@@ -25,8 +25,6 @@ export const TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
 export const TOKEN_SYMBOL = "tUSDC";
 export const TOKEN_DECIMALS = 6;
 
-export const HIRO_API = "";
-
 export const EXPLORER = NETWORK.explorer;
 export const explorerTx = (txid: string) => `${EXPLORER}/tx/${txid}`;
 export const explorerAddress = (addr: string) => `${EXPLORER}/address/${addr}`;
