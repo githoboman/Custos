@@ -7,6 +7,7 @@
     "compile:sol": "node scripts/compile.cjs",
     "check:botchain": "node scripts/check-botchain.cjs",
     "check:mainnet": "node scripts/check-mainnet-readiness.cjs",
+    "test:interactions": "node scripts/test-interactions.cjs",
     "deploy:botchain:testnet": "node scripts/deploy-botchain.cjs --network testnet",
     "deploy:botchain:mainnet": "node scripts/deploy-botchain.cjs --network mainnet"
   },

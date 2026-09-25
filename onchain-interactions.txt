@@ -27,38 +27,43 @@ Contract Explorer:   https://scan.botchain.ai/address/0xBcBcC1824c769802A7872bC0
 Deployer Explorer:   https://scan.botchain.ai/address/0x196Bd1E60FB381D4AD9cd98c9952B512dc4D6d4E
 
 ================================================================================
-SECTION 2: BOT CHAIN TESTNET DEPLOYMENT (STAGING / DEMO)
+SECTION 2: LIVE ON-CHAIN INTERACTION & LIFECYCLE EXECUTION
 ================================================================================
-Network:             BOT Chain Testnet
-Chain ID:            968
-RPC Endpoint:        https://rpc.bohr.life
-Block Explorer:      https://scan.bohr.life
-Deployer Address:    0x196Bd1E60FB381D4AD9cd98c9952B512dc4D6d4E
-Timestamp:           2026-09-08 11:26:00 UTC
-Status:              CONFIRMED & VERIFIED
+Network:             BOT Chain Testnet (Chain ID 968)
+Test Asset:          tUSDC (Mock ERC-20)
+Contract Under Test: Custos (0x36038b726A0cB94E5e9544483B81dD48358df486)
+Client:              0x196Bd1E60FB381D4AD9cd98c9952B512dc4D6d4E
+Freelancer:          0x6471336ed4e0B3806445dDF6d0b0eAA43657E2d1
 
---- CORE CONTRACT: CUSTOS ESCROW PROTOCOL (TESTNET) ---
-Contract Name:       Custos
-Contract Address:    0x36038b726A0cB94E5e9544483B81dD48358df486
-Transaction Hash:    0xbc1cdff31ee6149ba36d7bbea8cf60744e27b25c44707463c0687ed7f7f964c3
-Block Number:        22678984
-Tx Explorer:         https://scan.bohr.life/tx/0xbc1cdff31ee6149ba36d7bbea8cf60744e27b25c44707463c0687ed7f7f964c3
-Contract Explorer:   https://scan.bohr.life/address/0x36038b726A0cB94E5e9544483B81dD48358df486
+Full Lifecycle Execution Records:
+1. Client Token Approval (200 tUSDC):
+   Tx: https://scan.bohr.life/tx/0xa2e728eae9c45b39924f1f373595563a20f0e353b26f0c1db0ca5634abaa8fe0
 
---- TEST ASSET: MOCK ERC-20 (tUSDC) ---
-Contract Name:       MockERC20 (tUSDC)
-Contract Address:    0xBcBcC1824c769802A7872bC0599764e83506c757
-Transaction Hash:    0x1ed0dc4b6f5fcc6d3ce2998db3f1a0ab3167bb4b16b46e14e4857cb98342cb0f
-Block Number:        22678978
-Decimals:            6
-Initial Supply:      1,000,000.0 tUSDC
-Tx Explorer:         https://scan.bohr.life/tx/0x1ed0dc4b6f5fcc6d3ce2998db3f1a0ab3167bb4b16b46e14e4857cb98342cb0f
-Contract Explorer:   https://scan.bohr.life/address/0xBcBcC1824c769802A7872bC0599764e83506c757
+2. Retainer #0 Creation (50 upfront + 150 locked in escrow):
+   Tx: https://scan.bohr.life/tx/0xe09dafbe4b3a09c83bdc7d143eb5cf6dd60ff124253f7fcdaff9d3b863ea9119
+   Result: Upfront 50 tUSDC paid instantly to freelancer; 150 tUSDC locked in Custos escrow contract.
+
+3. Freelancer Delivery Confirmation (markDelivered):
+   Tx: https://scan.bohr.life/tx/0x2e80d81eeb1b80768531001dafd0ca39222bac173c41225c7a161e5c3b2c33ab
+   Result: Retainer transitioned from "Active" to "Delivered".
+
+4. Client Approval & Escrow Release (approveAndRelease):
+   Tx: https://scan.bohr.life/tx/0x88b5ad5d148982fec9752b4e930160f64e5c3673b50ddb2d1ab6441a6998e7b2
+   Result: 150 tUSDC locked escrow released to freelancer. Retainer state updated to "Paid". Contract escrow balance returned to 0.
 
 ================================================================================
-SECTION 3: VERIFICATION SUMMARY
+SECTION 3: BOT CHAIN TESTNET DEPLOYMENT RECORDS
+================================================================================
+Custos Contract:     0x36038b726A0cB94E5e9544483B81dD48358df486
+Tx:                  https://scan.bohr.life/tx/0xbc1cdff31ee6149ba36d7bbea8cf60744e27b25c44707463c0687ed7f7f964c3
+
+Mock Token (tUSDC):  0xBcBcC1824c769802A7872bC0599764e83506c757
+Tx:                  https://scan.bohr.life/tx/0x1ed0dc4b6f5fcc6d3ce2998db3f1a0ab3167bb4b16b46e14e4857cb98342cb0f
+
+================================================================================
+SECTION 4: VERIFICATION SUMMARY
 ================================================================================
 - Both Testnet and Mainnet deployments were signed and broadcast directly via official BOT Chain JSON-RPC nodes.
-- Mainnet contract state is confirmed: nextId initialized to 0, ReentrancyGuard active, non-custodial milestone logic operational.
+- Full end-to-end milestone escrow lifecycle verified: createRetainer -> markDelivered -> approveAndRelease.
 - Verified ABI & Bytecode correspond directly to contracts/Custos.sol.
 ================================================================================

@@ -1,7 +1,7 @@
 "use client";
 
 import { ethers } from "ethers";
-import { CUSTOS_ADDRESS, TOKEN_ADDRESS, NETWORK_NAME, NETWORK } from "./config";
+import { CUSTOS_ADDRESS, TOKEN_ADDRESS, NETWORK } from "./config";
 
 type OnFinish = (txId: string) => void;
 
@@ -16,12 +16,14 @@ const CUSTOS_ABI: ethers.InterfaceAbi = [
 ];
 
 const TOKEN_ABI: ethers.InterfaceAbi = [
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function approve(address spender, uint256 value) external returns (bool)",
   "function transferFrom(address from, address to, uint256 value) external returns (bool)",
   "function mint(address to, uint256 amount) external",
 ];
 
 async function getSigner() {
-  if (!window.ethereum) throw new Error("No wallet found");
+  if (typeof window === "undefined" || !window.ethereum) throw new Error("No wallet found");
   const provider = new ethers.BrowserProvider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
   return await provider.getSigner();
@@ -51,7 +53,7 @@ async function sendTx(
   }
 }
 
-export function createRetainer(
+export async function createRetainer(
   args: {
     freelancer: string;
     upfront: bigint;
@@ -62,14 +64,42 @@ export function createRetainer(
   onFinish?: OnFinish,
   onCancel?: () => void
 ) {
-  sendTx(
-    CUSTOS_ADDRESS,
-    CUSTOS_ABI,
-    "createRetainer",
-    [TOKEN_ADDRESS, args.freelancer, args.upfront, args.lock, args.deliveryWindow, args.approvalWindow],
-    onFinish,
-    onCancel
-  );
+  try {
+    const signer = await getSigner();
+    const clientAddress = await signer.getAddress();
+    const totalAmount = args.upfront + args.lock;
+
+    const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+
+    // Check allowance
+    const currentAllowance = await tokenContract.allowance(clientAddress, CUSTOS_ADDRESS);
+    if (currentAllowance < totalAmount) {
+      console.log("Approving token spend...");
+      const approveTx = await tokenContract.approve(CUSTOS_ADDRESS, totalAmount);
+      await approveTx.wait();
+      console.log("Token spend approved!");
+    }
+
+    // Now call createRetainer
+    const custosContract = new ethers.Contract(CUSTOS_ADDRESS, CUSTOS_ABI, signer);
+    const tx = await custosContract.createRetainer(
+      TOKEN_ADDRESS,
+      args.freelancer,
+      args.upfront,
+      args.lock,
+      args.deliveryWindow,
+      args.approvalWindow
+    );
+    const receipt = await tx.wait();
+    if (receipt && typeof receipt === "object" && "hash" in receipt) {
+      onFinish?.((receipt as { hash: string }).hash);
+    } else {
+      onCancel?.();
+    }
+  } catch (e) {
+    console.warn("createRetainer cancelled/failed:", e);
+    onCancel?.();
+  }
 }
 
 export function markDelivered(id: number, onFinish?: OnFinish, onCancel?: () => void) {

@@ -1,0 +1,90 @@
+================================================================================
+CUSTOS PROTOCOL — OFFICIAL X (TWITTER) LAUNCH POSTS
+Native Escrow & Freelance Retainer Protocol on BOT Chain (@BOTChain_ai)
+================================================================================
+
+POST 1: The Mainnet Launch Announcement (Broad Reach & Ecosystem Buzz)
+--------------------------------------------------------------------------------
+Freelance contracts in Web3 shouldn't rely on blind trust or high-fee middlemen. 
+
+Today, we are thrilled to announce that Custos Protocol is officially LIVE on @BOTChain_ai Mainnet! 🚀
+
+🛡️ Programmable 2-key retainers
+⚡ Instant upfront milestone payouts
+🔒 Non-custodial escrow protection
+⚖️ Arbiter-free mutual dispute resolution
+
+Say goodbye to payment ghosting. Read the full announcement & explore our verified contract:
+🔗 https://scan.botchain.ai/address/0xBcBcC1824c769802A7872bC0599764e83506c757
+
+#BOTChain #Web3 #Crypto #DeFi #SmartContracts #BuildOnBOT
+
+--------------------------------------------------------------------------------
+POST 2: The Core Problem & Solution (Targeting Freelancers & DAOs)
+--------------------------------------------------------------------------------
+Upwork takes 10–20% of your earnings. 
+Clients ghost after receiving deliverables.
+Traditional smart contracts lock funds with no fair dispute path.
+
+Custos fixes the broken freelance economy on @BOTChain_ai:
+
+1️⃣ Split Payouts: Upfront milestone cash flows immediately to the contractor.
+2️⃣ True Escrow: Remainder is locked non-custodially until work delivery.
+3️⃣ Auto-Release: Clients can't stall forever—funds auto-release after the approval window.
+4️⃣ Fair Splits: Mutual dispute consensus with zero centralized arbiter risk.
+
+Work trustless. Get paid guaranteed. 💼🌐
+
+#FreelanceWeb3 #GigEconomy #CryptoJobs #BOTChain
+
+--------------------------------------------------------------------------------
+POST 3: AI Agent & DePIN Economy Thesis (Aligning with BOT Chain's Core Vision)
+--------------------------------------------------------------------------------
+@BOTChain_ai was built for AI Agents, DePIN, and the autonomous machine economy. 
+
+What happens when an AI Agent needs to hire a human developer, or contract another AI Agent for compute? 
+
+They need an autonomous, programmable escrow rail. 🤖🤝👤
+
+Custos Protocol provides the native financial settlement layer for autonomous service agreements on BOT Chain:
+✅ Automated milestone gating
+✅ Cryptographic delivery confirmations
+✅ Deterministic time-locks & zero human bias
+
+The future of autonomous work starts on BOT Chain. 
+
+#AIAgents #DePIN #AIWeb3 #BOTChain #Custos
+
+--------------------------------------------------------------------------------
+POST 4: The Developer & Ecosystem Call to Action (On-Chain Transparency)
+--------------------------------------------------------------------------------
+Builders & DAOs on @BOTChain_ai: Your contributors deserve guaranteed escrow.
+
+We’ve verified our full protocol on-chain:
+📍 Mainnet: 0xBcBcC1824c769802A7872bC0599764e83506c757
+📍 Testnet: 0x36038b726A0cB94E5e9544483B81dD48358df486
+📍 Gas Cost: Sub-cent transactions powered by native $BOT
+
+Integrate our non-reentrant, audited escrow contracts directly into your DAO treasuries, bounty boards, and project payment flows.
+
+Check out the code & start building:
+👉 https://github.com/githoboman/Custos
+
+#OpenSource #BUIDL #EVM #BOTChain
+
+--------------------------------------------------------------------------------
+POST 5: Community Incentive & Partnership Teaser (Engagement & Growth)
+--------------------------------------------------------------------------------
+Ready to test the future of decentralized escrow? 🛡️
+
+In partnership with the @BOTChain_ai Ecosystem Support Program ($50M Fund), Custos is rolling out:
+🎁 Gas rebates on every retainer created
+💎 Protocol community points for active clients & freelancers
+🔥 0% protocol fees during our genesis launch window
+
+Whether you're paying a dev, a designer, or hiring an auditor: protect your funds on BOT Chain.
+
+Drop a 🛡️ in the replies if you're ready to ditch centralized platforms!
+
+#Airdrop #Web3Community #BOTChainEcosystem #CryptoIncentives
+================================================================================
